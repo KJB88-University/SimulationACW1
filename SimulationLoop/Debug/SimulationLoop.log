@@ -1,0 +1,11 @@
+﻿  Sphere.cpp
+  Generating Code...
+  Compiling...
+  Game.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  main.cpp
+  PhysicsManager.cpp
+  ContactManifold.cpp
+  SimulationLoop.vcxproj -> C:\SimulationLoop_2017-18\Debug\SimulationLoop.exe
+  SimulationLoop.vcxproj -> C:\SimulationLoop_2017-18\Debug\SimulationLoop.pdb (Full PDB)

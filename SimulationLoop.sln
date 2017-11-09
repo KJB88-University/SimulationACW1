@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulationLoop", "SimulationLoop\SimulationLoop.vcxproj", "{CC55B7F0-C25F-4C96-8346-3E32686375E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{094F4CE3-6EC7-4CD2-858F-975AE20AE29E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC55B7F0-C25F-4C96-8346-3E32686375E8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CC55B7F0-C25F-4C96-8346-3E32686375E8}.Debug|Win32.Build.0 = Debug|Win32
+		{CC55B7F0-C25F-4C96-8346-3E32686375E8}.Release|Win32.ActiveCfg = Release|Win32
+		{CC55B7F0-C25F-4C96-8346-3E32686375E8}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {421655F2-AB25-43D3-B223-9839FAFE0ED5}
+	EndGlobalSection
+EndGlobal
