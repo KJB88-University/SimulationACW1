@@ -14,7 +14,6 @@ public:
 
 	// PRE-COLLISION PHYSICS
 	Vector3f CalculatePrePhysics(Sphere* sphere, float dt);
-	Vector3f ApplyExternalForces();
 
 	// DETECTION
 	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
@@ -36,6 +35,24 @@ public:
 
 private:
 
+	struct State
+	{
+		Vector3f position;
+		Vector3f velocity;
+	};
+
+	struct Differential
+	{
+		Vector3f dx; // dx/dt = velocity
+		Vector3f dv; // dv/dt = acceleration
+	};
+
+	// RUNGE-KUTTA FOURTH ORDER
+	Vector3f RK4Integrate(State* state, double t, float dt);
+	Vector3f RK4Evaluate(State initial, double t, float dt, Differential diff);
+	Vector3f ApplyExternalForces(Vector3f velocity);
+
+
 	// Private constructor to avoid instances being created
 	PhysicsManager(void);
 
@@ -46,5 +63,5 @@ private:
 	float m_CoR;
 
 	// Acceleration due to Gravity
-	float m_gravity = -9.81f;
+	const float m_gravity = -9.81f;
 };

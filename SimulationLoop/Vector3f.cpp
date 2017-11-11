@@ -39,6 +39,21 @@ float Vector3f::GetZ() const
 	return m_z;
 }
 
+void Vector3f::SetX(float X)
+{
+	m_x = X;
+}
+
+void Vector3f::SetY(float Y)
+{
+	m_y = Y;
+}
+
+void Vector3f::SetZ(float Z)
+{
+	m_z = Z;
+}
+
 Vector3f Vector3f::add(const Vector3f &vec) const
 {
 	return Vector3f(m_x + vec.GetX(), m_y + vec.GetY(), m_z + vec.GetZ());

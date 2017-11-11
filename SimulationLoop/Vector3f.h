@@ -1,6 +1,7 @@
 #pragma once
 class Vector3f
 {
+
 public:
 	Vector3f(void);
 	Vector3f(float x, float y, float z);
@@ -10,6 +11,9 @@ public:
 	float GetX() const;
 	float GetY() const;
 	float GetZ() const;
+	void SetX(float X);
+	void SetY(float Y);
+	void SetZ(float Z);
 
 	Vector3f add(const Vector3f &vec) const;
 	Vector3f subtract(const Vector3f &vec) const;

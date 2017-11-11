@@ -91,16 +91,18 @@ Vector3f Sphere::GetAccel() const
 void Sphere::CalculatePhysics(float dt)
 {
 	// Calcuate total force for this sphere, e.g. F = F1+F2+F3+...
-	m_force = Vector3f(0.0f, -9.81f * k_mass, 0.0f);
+	//m_force = Vector3f(0.0f, -9.81f * k_mass, 0.0f);
 
 	// Calculate acceleration
-	m_acceleration = m_force / k_mass;
+	//m_acceleration = m_force / k_mass;
 
 	// Integrate accel to get the new velocity (using Euler)
-	m_newVelocity = m_velocity + (m_acceleration * dt);
+	//m_newVelocity = m_velocity + (m_acceleration * dt);
 
 	// Integrate old velocity to get the new position (using Euler)
-	m_newPos = m_pos + (m_velocity * dt);
+	//m_newPos = m_pos + (m_velocity * dt);
+
+	//physics->CalculatePrePhysics(this, dt);
 
 	// TODO - Bad plane detection
 	if (m_newPos.GetY() < -20.0f + m_radius)
@@ -152,6 +154,9 @@ void Sphere::Update()
 {
 	m_velocity = m_newVelocity;
 	m_pos = m_newPos;
+
+	m_oldPosition = m_pos;
+	m_oldVelocity = m_velocity;
 }
 #pragma endregion
 

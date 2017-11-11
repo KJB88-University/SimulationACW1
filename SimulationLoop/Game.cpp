@@ -6,10 +6,12 @@
 
 const float Game::scaleTweakable = 10;
 
-
 // Constructor
 Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 {
+	// Default gameTime
+	gameTime = 0;
+
 	// Create / Get Managers
 	inputManager = InputManager::GetInstance();
 	physicsManager = PhysicsManager::GetInstance();
@@ -381,6 +383,8 @@ void Game::SimulationLoop()
 
 	// Update the physics calculations on all objects (e.g. new position, velocity, etc)
 	UpdateObjectPhysics();
+
+	gameTime += m_dt;
 }
 
 

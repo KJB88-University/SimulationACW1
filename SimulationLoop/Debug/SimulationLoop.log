@@ -1,11 +1,16 @@
-﻿  Sphere.cpp
+﻿  Game.cpp
   Generating Code...
   Compiling...
-  Game.cpp
+  main.cpp
+c:\simulationloop_2017-18\simulationloop\main.cpp(34): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(242): note: see declaration of 'freopen'
+c:\simulationloop_2017-18\simulationloop\main.cpp(35): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(242): note: see declaration of 'freopen'
+c:\simulationloop_2017-18\simulationloop\main.cpp(36): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(242): note: see declaration of 'freopen'
   Generating Code...
   Skipping... (no relevant changes detected)
-  main.cpp
   PhysicsManager.cpp
-  ContactManifold.cpp
+ConsoleManager.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
   SimulationLoop.vcxproj -> C:\SimulationLoop_2017-18\Debug\SimulationLoop.exe
   SimulationLoop.vcxproj -> C:\SimulationLoop_2017-18\Debug\SimulationLoop.pdb (Full PDB)

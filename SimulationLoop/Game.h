@@ -8,6 +8,7 @@
 #include "InputManager.h"
 #include "PhysicsManager.h"
 #include "Plane.h"
+#include "Hemisphere.h"
 
 using namespace std;
 
@@ -40,12 +41,14 @@ private:
 	PhysicsManager* physicsManager;
 	InputManager* inputManager;
 
+	Hemisphere* hemisphere;
 	vector<Geometry*> objVector;
 	vector<Plane*> boxQuads;
-	Hemisphere* hemisphere;
+
 
 	HDC   m_hdc;
 
+	double gameTime;
 	float m_dt;
 	float original_dt;
 	int	  m_fps;
