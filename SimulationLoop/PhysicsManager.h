@@ -7,13 +7,31 @@
 
 class PhysicsManager
 {
+private:
+
+	struct State
+	{
+		Vector3f position;
+		Vector3f velocity;
+		Vector3f acceleration;
+		float mass;
+	};
+
+	struct Differential
+	{
+		Vector3f dx; // dx/dt = velocity
+		Vector3f dv; // dv/dt = acceleration
+	};
+
 public:
 
 	// Get instance of this manager
 	static PhysicsManager* GetInstance();
 
+	// ALL SIMULATION STEPS UPDATE OBJECT VIA POINTERS
+	// NO RETURN VALUES NECESSARY
 	// PRE-COLLISION PHYSICS
-	Vector3f CalculatePrePhysics(Sphere* sphere, float dt);
+	void CalculatePrePhysics(Sphere* sphere, double t, float dt);
 
 	// DETECTION
 	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
@@ -24,7 +42,7 @@ public:
 	void SphereToPlaneCollisionResponse(ManifoldPoint &point);
 
 	// POST-COLLISION PHYSICS
-	Vector3f CalculatePostPhysics(Sphere* sphere);
+	void CalculatePostPhysics(Sphere* sphere);
 
 	// ELASTICITY MANIPULATION
 	void IncrementElasticity(void);
@@ -35,22 +53,10 @@ public:
 
 private:
 
-	struct State
-	{
-		Vector3f position;
-		Vector3f velocity;
-	};
-
-	struct Differential
-	{
-		Vector3f dx; // dx/dt = velocity
-		Vector3f dv; // dv/dt = acceleration
-	};
-
 	// RUNGE-KUTTA FOURTH ORDER
-	Vector3f RK4Integrate(State* state, double t, float dt);
-	Vector3f RK4Evaluate(State initial, double t, float dt, Differential diff);
-	Vector3f ApplyExternalForces(Vector3f velocity);
+	void RK4Integrate(State* state, double t, float dt);
+	Differential RK4Evaluate(State* initial, double t, float dt, Differential diff);
+	Vector3f ApplyExternalForces(const State* state, const double t);
 
 
 	// Private constructor to avoid instances being created

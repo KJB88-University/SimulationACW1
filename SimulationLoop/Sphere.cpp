@@ -88,7 +88,7 @@ Vector3f Sphere::GetAccel() const
 #pragma endregion
 
 #pragma region SIMULATION_LOOP
-void Sphere::CalculatePhysics(float dt)
+void Sphere::CalculatePhysics(float dt, double t)
 {
 	// Calcuate total force for this sphere, e.g. F = F1+F2+F3+...
 	//m_force = Vector3f(0.0f, -9.81f * k_mass, 0.0f);
@@ -102,7 +102,7 @@ void Sphere::CalculatePhysics(float dt)
 	// Integrate old velocity to get the new position (using Euler)
 	//m_newPos = m_pos + (m_velocity * dt);
 
-	//physics->CalculatePrePhysics(this, dt);
+	physics->CalculatePrePhysics(this, t, dt);
 
 	// TODO - Bad plane detection
 	if (m_newPos.GetY() < -20.0f + m_radius)
@@ -110,6 +110,7 @@ void Sphere::CalculatePhysics(float dt)
 		m_newPos.Set(m_newPos.GetX(), -20.0f + m_radius, 0.0f);
 		m_newVelocity.Set(m_newVelocity.GetX(), 0.0f, 0.0f);
 	}
+	
 }
 
 void Sphere::CollisionDetection(Geometry* geometry2, ContactManifold *contactManifold)

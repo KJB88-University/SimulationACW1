@@ -394,7 +394,7 @@ void Game::CalculateObjectPhysics()
 	int length = objVector.size();
 	for (int i = 0; i < length; i++)
 	{
-		objVector[i]->CalculatePhysics(m_dt);
+		objVector[i]->CalculatePhysics(m_dt, gameTime);
 	}
 }
 

@@ -23,7 +23,7 @@ public:
 	virtual int GetID() const;
 
 	// Simulation Loop Methods
-	virtual void CalculatePhysics(float dt) = 0;
+	virtual void CalculatePhysics(float dt, double t) = 0;
 	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold) = 0;
 	virtual void CollisionResponse(ManifoldPoint &point) = 0;
 	virtual void Update() = 0;

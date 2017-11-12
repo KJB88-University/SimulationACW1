@@ -21,51 +21,78 @@ PhysicsManager::PhysicsManager()
 	m_CoR = 0.5f;
 }
 
+// RK4 Implementation
+// Adapted from Glenn Fiedler's implementation 
+// <https://gafferongames.com/post/integration_basics/>
+// [1st June 2014],
+// Accessed on: 7th November 2017.
+#pragma region RK4 Integration Implementation
 
-Vector3f PhysicsManager::CalculatePrePhysics(Sphere* sphere, float dt)
+void PhysicsManager::CalculatePrePhysics(Sphere* sphere, double t, float dt)
 {
 	// Setup required structs
 	State state = State();
 
-	// Get initial values
-	Vector3f initialPos = sphere->GetPos();
-	Vector3f initialVel = sphere->GetVel();
-
-	state.position = initialPos;
-	state.velocity = initialVel;
-
-	Vector3f dV = (sphere->GetForce() / sphere->GetMass()) * dt;
-	// TODO
+	// Assign state with initial values
+	state.position = sphere->GetPos();
+	state.velocity = sphere->GetVel();
+	state.acceleration = sphere->GetAccel();
 
 	// Integrate
+	RK4Integrate(&state, t, dt);
+
+	// Push new positions to object
+	sphere->SetNewPos(state.position);
+	sphere->SetNewVel(state.velocity);
 }
 
 
-Vector3f PhysicsManager::RK4Integrate(State* state, double t, float dt)
+void PhysicsManager::RK4Integrate(State* state, double t, float dt)
 {
+	// Declare required steps
 	Differential k1, k2, k3, k4;
 
-	return 
+	// Calculate RK4 steps
+	k1 = RK4Evaluate(state, t, 0.0f, Differential());
+	k2 = RK4Evaluate(state, t, dt * 0.5f, k1);
+	k3 = RK4Evaluate(state, t, dt * 0.5f, k2);
+	k4 = RK4Evaluate(state, t, dt, k3);
 
+	// Apply full RK4 integration
+	Vector3f dxdt = 1.0f / 6.0f * (k1.dx + 2.0f * (k2.dx + k3.dx) + k4.dx);
+	Vector3f dvdt = 1.0f / 6.0f * (k1.dv + 2.0f * (k2.dv + k3.dv) + k4.dv);
+
+	// Update state with changed values
+	state->position = state->position + dxdt * dt;
+	state->velocity = state->velocity + dvdt * dt;
 }
 
-Vector3f PhysicsManager::RK4Evaluate(State initial, double t, float dt, Differential diff)
+PhysicsManager::Differential PhysicsManager::RK4Evaluate(State* initial, double t, float dt, Differential diff)
 {
+	// Create new state
 	State newState;
-	newState.position = initial.position + diff.dx * dt;
-	newState.velocity = initial.velocity + diff.dv * dt;
 
+	// Update initial position with the rate of change
+	newState.position = initial->position + diff.dx * dt;
+	newState.velocity = initial->velocity + diff.dv * dt;
+
+	// Create new derivative
 	Differential output;
+
+	// Update derivative with new values
 	output.dx = newState.velocity;
-	output.dv = newState.velocity * m_gravity;
+	output.dv = ApplyExternalForces(&newState, t); // Apply external forces like gravity, etc.
+	return output;
 }
 
-
-Vector3f PhysicsManager::ApplyExternalForces(Vector3f velocity)
+Vector3f PhysicsManager::ApplyExternalForces(const State* state, const double t)
 {
-	velocity.SetY(velocity.GetY() * m_gravity);
-	return velocity;
+	Vector3f force = Vector3f(0.0f, state->mass * m_gravity, 0.0f);
+	Vector3f accel = force / state->mass;
+	return accel;
 }
+
+#pragma endregion
 
 void PhysicsManager::SphereToSphereCollisionDetection
 (Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold)
