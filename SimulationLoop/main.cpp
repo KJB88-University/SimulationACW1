@@ -94,6 +94,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd,
 		case VK_DOWN:
 			inputManager->DownArrowDown();
 			break;
+
+		case VK_LEFT:
+			inputManager->LeftArrowDown();
+			break;
+
+		case VK_RIGHT:
+			inputManager->RightArrowDown();
+			break;
+
+		case VK_PRIOR:
+			inputManager->PgDownDown();
+			break;
+
+		case VK_NEXT:
+			inputManager->PgUpDown();
+			break;
+
 			// OTHER KEY PRESSES
 		default:
 			// INPUTMANAGEMENT - Set given key to DOWN
@@ -120,6 +137,22 @@ LRESULT CALLBACK WindowProc(HWND hwnd,
 
 		case VK_DOWN:
 			inputManager->DownArrowUp();
+			break;
+
+		case VK_LEFT:
+			inputManager->LeftArrowUp();
+			break;
+
+		case VK_RIGHT:
+			inputManager->RightArrowUp();
+			break;
+
+		case VK_PRIOR:
+			inputManager->PgDownUp();
+			break;
+
+		case VK_NEXT:
+			inputManager->PgUpUp();
 			break;
 
 		default:

@@ -6,6 +6,8 @@
 #include <gl\gl.h>  
 #include "Geometry.h"
 #include <gl\GLU.h>
+#include "ObjectType.h"
+
 class PhysicsManager;
 
 class Sphere : public Geometry
@@ -41,6 +43,7 @@ public:
 private:
 	
 	// Sphere-specific data members
+	ObjectType objType = SPHERE;
 	float m_radius;
 	Vector3f m_newPos;
 	Vector3f m_velocity;

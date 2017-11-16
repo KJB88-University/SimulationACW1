@@ -7,6 +7,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "TextureLoader.h"
+#include "Game.h"
 
 #pragma region CONSTRUCTOR_DESTRUCTOR
 
@@ -73,7 +74,7 @@ void Hemisphere::Render() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Change to line drawing
 
 	glEnable(GL_CLIP_PLANE0);
-	glTranslatef(m_pos.GetX(), m_pos.GetY() - 15.0f * 10.0f, m_pos.GetZ()); // Move world for clipping plane
+	glTranslatef(m_pos.GetX(), m_pos.GetY() - 20.0f * Game::scaleTweakable, m_pos.GetZ()); // Move world for clipping plane
 	glClipPlane(GL_CLIP_PLANE0, planeEqn); 
 
 	glTranslatef(m_pos.GetX(), m_pos.GetY(), m_pos.GetZ()); // Return world for drawing sphere

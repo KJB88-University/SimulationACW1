@@ -3,10 +3,11 @@
 #include "Geometry.h"
 #include "Vector3f.h"
 #include <vector>
+#include "ObjectType.h"
 
 using namespace std;
 
-class Plane
+class Plane : public Geometry
 {
 
 public:
@@ -18,10 +19,18 @@ public:
 
 	void SetupTray(void);
 	void ToggleTray(void);
-	void Render(void);
+
+	// Simulation Loop Methods
+	virtual void CalculatePhysics(float dt, double t);
+	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold);
+	virtual void CollisionResponse(ManifoldPoint &point);
+	virtual void Update();
+
+	virtual void Render() const;
 
 private:
 
+	ObjectType objType = PLANE;
 	bool hasTray;
 	bool trayIn;
 	vector<Vector3f> m_Bounds;

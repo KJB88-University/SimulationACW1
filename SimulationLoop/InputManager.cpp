@@ -33,7 +33,7 @@ InputManager::~InputManager(void)
 // Return false if key is up,
 // Return true is key is down,
 // Return false is key is not recognised
-bool InputManager::CheckKeyPress(char key)
+const bool InputManager::CheckKeyPress(char key)
 {
 	for (int i = 0; i < k_arraySize; ++i)
 	{
@@ -57,7 +57,7 @@ bool InputManager::CheckKeyPress(char key)
 	return false;
 }
 
-bool InputManager::CheckKeyHeld(char key)
+const bool InputManager::CheckKeyHeld(char key) const
 {
 	for (int i = 0; i < k_arraySize; ++i)
 	{
@@ -97,6 +97,37 @@ void InputManager::KeyDown(char key)
 	}
 }
 
+// PAGE UP/DOWN
+void InputManager::PgUpDown()
+{
+	pgUp = true;
+}
+
+void InputManager::PgUpUp()
+{
+	pgUp = false;
+}
+
+void InputManager::PgDownDown()
+{
+	pgDown = true;
+}
+
+void InputManager::PgDownUp()
+{
+	pgDown = false;
+}
+
+const bool InputManager::CheckPgUp() const
+{
+	return pgUp;
+}
+
+const bool InputManager::CheckPgDown() const
+{
+	return pgDown;
+}
+
 // ARROW KEY
 void InputManager::UpArrowDown()
 {
@@ -118,14 +149,44 @@ void InputManager::DownArrowUp()
 	downArrow = false;
 }
 
-bool InputManager::CheckDownArrow()
+const bool InputManager::CheckDownArrow() const
 {
 	return downArrow;
 }
 
-bool InputManager::CheckUpArrow()
+const bool InputManager::CheckUpArrow() const
 {
 	return upArrow;
+}
+
+void InputManager::LeftArrowDown()
+{
+	leftArrow = true;
+}
+
+void InputManager::LeftArrowUp()
+{
+	leftArrow = false;
+}
+
+void InputManager::RightArrowDown()
+{
+	rightArrow = true;
+}
+
+void InputManager::RightArrowUp()
+{
+	rightArrow = false;
+}
+
+const bool InputManager::CheckLeftArrow() const
+{
+	return leftArrow;
+}
+
+const bool InputManager::CheckRightArrow() const
+{
+	return rightArrow;
 }
 
 // SHIFT TOGGLE
@@ -139,7 +200,7 @@ void InputManager::ShiftUp()
 	shiftToggle = false;
 }
 
-bool InputManager::CheckShift()
+const bool InputManager::CheckShift() const
 {
 	return shiftToggle;
 }

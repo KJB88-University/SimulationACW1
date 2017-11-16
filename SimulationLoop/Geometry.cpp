@@ -6,8 +6,8 @@
 
 int Geometry::countID = 0;
 
-Geometry::Geometry(Vector3f pos, float mass, bool isStatic) 
-	: k_mass(mass), k_objectID(countID), k_isStaticGeometry(isStatic)
+Geometry::Geometry(Vector3f pos, float mass, bool isStatic, ObjectType inType) 
+	: k_mass(mass), k_objectID(countID), k_isStaticGeometry(isStatic), objType(inType)
 {
 	m_pos = pos;
 	++countID;

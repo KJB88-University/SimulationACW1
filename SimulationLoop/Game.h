@@ -15,6 +15,9 @@ using namespace std;
 class Game
 {
 public:
+	// Modify the scale of the simulation by this
+	const static float scaleTweakable;
+
 	Game(HDC hdc);
 	~Game(void);
 
@@ -34,9 +37,6 @@ private:
 	//void ResetSim();
 
 private:
-
-	// Modify the scale of the simulation by this
-	const static float scaleTweakable;
 
 	PhysicsManager* physicsManager;
 	InputManager* inputManager;
@@ -67,7 +67,7 @@ private:
 
 	// Camera vars
 	const float baseSpeed = 15.0f;
-	const float shiftMultipler = 3.0f;
+	const float shiftMultiplier = 3.0f;
 
 	float pan_x = 0.0f;
 	float pan_y = 0.0f;

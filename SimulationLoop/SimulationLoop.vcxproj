@@ -121,6 +121,7 @@
     <ClInclude Include="Hemisphere.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="ObjectType.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Sphere.h" />

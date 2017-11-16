@@ -12,11 +12,15 @@ public:
 	static InputManager* GetInstance();
 
 	// Check the status of a key
-	bool CheckKeyPress(char);
-	bool CheckKeyHeld(char);
-	bool CheckDownArrow(void);
-	bool CheckUpArrow(void);
-	bool CheckShift(void);
+	const bool CheckKeyPress(char);
+	const bool CheckKeyHeld(char) const;
+	const bool CheckDownArrow(void) const;
+	const bool CheckUpArrow(void) const;
+	const bool CheckShift(void) const;
+	const bool CheckLeftArrow(void) const;
+	const bool CheckRightArrow(void) const;
+	const bool CheckPgUp(void) const;
+	const bool CheckPgDown(void) const;
 
 	// Change the value of a key
 	void KeyUp(char);
@@ -28,9 +32,21 @@ public:
 
 	void DownArrowDown(void);
 	void DownArrowUp(void);
+
+	void LeftArrowDown(void);
+	void LeftArrowUp(void);
+	
+	void RightArrowDown(void);
+	void RightArrowUp(void);
 	
 	void ShiftUp(void);
 	void ShiftDown(void);
+
+	void PgUpDown(void);
+	void PgUpUp(void);
+
+	void PgDownDown(void);
+	void PgDownUp(void);
 
 private:
 	// Private constructor to avoid instances being created
@@ -44,7 +60,11 @@ private:
 
 	bool upArrow = false;
 	bool downArrow = false;
+	bool leftArrow = false;
+	bool rightArrow = false;
 	bool shiftToggle = false;
+	bool pgDown = false;
+	bool pgUp = false;
 
 	char relevantKeys[k_arraySize] =
 	{

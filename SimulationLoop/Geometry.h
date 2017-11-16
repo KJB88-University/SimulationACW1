@@ -4,18 +4,22 @@
 #include <Windows.h>
 #include <gl\gl.h>
 #include "ContactManifold.h"
+#include "ObjectType.h"
 
 // Base class 
 class Geometry
 {
 public:
 	// Constructors / Destructors
-	Geometry(Vector3f pos, float mass, bool isStatic);
+	Geometry(Vector3f pos, float mass, bool isStatic, ObjectType inType);
 	~Geometry(void);
-	Geometry(void);
+	//Geometry(void);
 
 	// Does this geometry move or interact dynamically?
 	const bool k_isStaticGeometry;
+
+	// Object type
+	const ObjectType objType;
 
 	// 'Properties'
 	virtual Vector3f GetPos() const;
@@ -26,9 +30,9 @@ public:
 	virtual void CalculatePhysics(float dt, double t) = 0;
 	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold) = 0;
 	virtual void CollisionResponse(ManifoldPoint &point) = 0;
-	virtual void Update() = 0;
+	virtual void Update(void) = 0;
 
-	virtual void Render() const = 0;
+	virtual void Render(void) const = 0;
 
 protected:
 	// Static counter for objID

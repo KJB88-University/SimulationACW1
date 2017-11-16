@@ -94,6 +94,25 @@ Vector3f PhysicsManager::ApplyExternalForces(const State* state, const double t)
 
 #pragma endregion
 
+void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold *contactManifold)
+{
+	// SPHERE TO SPHERE
+	if (geometry1->objType == SPHERE && geometry2->objType == SPHERE)
+	{
+		SphereToSphereCollisionDetection(static_cast<Sphere*>(geometry1), static_cast<Sphere*>(geometry2), contactManifold);
+	}
+
+	// SPHERE TO PLANE
+	else if (geometry1->objType == SPHERE && geometry2->objType == PLANE)
+	{
+		SphereToPlaneCollisionDetection(static_cast<Sphere*>(geometry1), static_cast<Plane*>(geometry2), contactManifold);
+	}
+	else if ((geometry1->objType == PLANE && geometry2->objType == SPHERE))
+	{
+		SphereToPlaneCollisionDetection(static_cast<Sphere*>(geometry2), static_cast<Plane*>(geometry1), contactManifold);
+	}
+}
+
 void PhysicsManager::SphereToSphereCollisionDetection
 (Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold)
 {
@@ -124,10 +143,12 @@ void PhysicsManager::SphereToSphereCollisionResponse
 	Vector3f colNormal = point.contactNormal;
 
 	point.contactID1->ResetPos();
-	point.contactID1->SetNewVel(-1.0f*colNormal*colNormal.dot(point.contactID1->GetVel()));
+	point.contactID1->SetNewVel(
+		-1.0f * colNormal * colNormal.dot(point.contactID1->GetVel()));
 
 	point.contactID2->ResetPos();
-	point.contactID2->SetNewVel(-1.0f*colNormal*colNormal.dot(point.contactID2->GetVel()));
+	point.contactID2->SetNewVel(
+		-1.0f * colNormal * colNormal.dot(point.contactID2->GetVel()));
 }
 
 void PhysicsManager::SphereToPlaneCollisionResponse

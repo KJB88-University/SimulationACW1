@@ -34,6 +34,7 @@ public:
 	void CalculatePrePhysics(Sphere* sphere, double t, float dt);
 
 	// DETECTION
+	void CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold* contactManifold);
 	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
 	void SphereToPlaneCollisionDetection(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold);
 

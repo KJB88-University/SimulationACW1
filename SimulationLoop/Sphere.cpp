@@ -12,7 +12,7 @@
 #pragma region CONSTRUCTOR_DESTRUCTOR
 
 Sphere::Sphere(Vector3f pos, Vector3f vel, float mass, float radius, bool isStatic)
-	: Geometry::Geometry(pos, mass, isStatic), m_radius(radius), m_velocity(vel)
+	: Geometry::Geometry(pos, mass, isStatic, objType), m_radius(radius), m_velocity(vel)
 {
 	m_texture = TextureLoader::LoadBMP("checker.bmp");
 	physics = PhysicsManager::GetInstance();

@@ -222,31 +222,6 @@ void Game::CheckInput()
 		}
 	}
 
-	// Camera Zoom out
-	if (inputManager->CheckDownArrow())
-	{
-		if (inputManager->CheckShift())
-		{
-			pan_z -= baseSpeed * shiftMultipler * m_dt;
-		}
-		else
-		{
-			pan_z -= baseSpeed * m_dt;
-		}
-	}
-
-	// Camera Zoom in
-	if (inputManager->CheckUpArrow())
-	{
-		if (inputManager->CheckShift())
-		{
-			pan_z += baseSpeed * shiftMultipler * m_dt;
-		}
-		else
-		{
-			pan_z += baseSpeed * m_dt;
-		}
-	}
 	if (inputManager->CheckKeyPress('I'))
 	{
 		// TODO - Increase friction magnitude
@@ -272,7 +247,7 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			pan_y -= baseSpeed * shiftMultipler * m_dt;
+			pan_y -= baseSpeed * shiftMultiplier * m_dt;
 		}
 		else
 		{
@@ -285,7 +260,7 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			pan_y += baseSpeed * shiftMultipler * m_dt;
+			pan_y += baseSpeed * shiftMultiplier * m_dt;
 		}
 		else
 		{
@@ -299,7 +274,7 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			pan_x += baseSpeed * shiftMultipler * m_dt;
+			pan_x += baseSpeed * shiftMultiplier * m_dt;
 		}
 		else
 		{
@@ -312,7 +287,7 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			pan_x -= baseSpeed * shiftMultipler * m_dt;
+			pan_x -= baseSpeed * shiftMultiplier * m_dt;
 		}
 		else
 		{
@@ -325,7 +300,7 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			pan_z -= baseSpeed * shiftMultipler * m_dt;
+			pan_z -= baseSpeed * shiftMultiplier * m_dt;
 		}
 		else
 		{
@@ -338,11 +313,70 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			pan_z += baseSpeed * shiftMultipler * m_dt;
+			pan_z += baseSpeed * shiftMultiplier * m_dt;
 		}
 		else
 		{
 			pan_z += baseSpeed * m_dt;
+		}
+	}
+
+	// Camera Y-Left rotation
+	if (inputManager->CheckLeftArrow())
+	{
+		if (inputManager->CheckShift())
+		{
+			rotate_y -= baseSpeed * shiftMultiplier * m_dt;
+		}
+
+		else
+		{
+			rotate_y -= baseSpeed * m_dt;
+		}
+
+	}
+
+	// Camera Y-Right rotation
+	if (inputManager->CheckRightArrow())
+	{
+		if (inputManager->CheckShift())
+		{
+			rotate_y += baseSpeed * shiftMultiplier * m_dt;
+		}
+
+		else
+		{
+			rotate_y += baseSpeed * m_dt;
+		}
+
+	}
+
+	// Camera X-Up rotation
+	if (inputManager->CheckPgUp())
+	{
+		if (inputManager->CheckShift())
+		{
+			rotate_x += baseSpeed * shiftMultiplier * m_dt;
+		}
+
+		else
+		{
+			rotate_x += baseSpeed * m_dt;
+
+		}
+	}
+
+	// Camera X-Down rotation
+	if (inputManager->CheckPgDown())
+	{
+		if (inputManager->CheckShift())
+		{
+			rotate_x -= baseSpeed * shiftMultiplier * m_dt;
+		}
+
+		else
+		{
+			rotate_x -= baseSpeed * m_dt;
 		}
 	}
 #pragma endregion
@@ -442,9 +476,11 @@ void Game::Render()									// Here's Where We Do All The Drawing
 	// CAMERA SETUP
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();									// Reset The Current Modelview Matrix
-	glTranslatef(pan_x, pan_y, pan_z);
+	
 	glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
 	glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
+	glTranslatef(pan_x, pan_y, pan_z);
+
 	gluLookAt(0, 50, 100, 0, 0, 0, 0, 1, 0);
 
 	//// Draw plane (at y=-20)
