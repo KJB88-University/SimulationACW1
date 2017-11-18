@@ -115,7 +115,7 @@ void Sphere::CalculatePhysics(float dt, double t)
 
 void Sphere::CollisionDetection(Geometry* geometry2, ContactManifold *contactManifold)
 {
-	physics->SphereToSphereCollisionDetection(this, static_cast<Sphere*>(geometry2), contactManifold);
+	physics->CollisionDetection(this, static_cast<Sphere*>(geometry2), contactManifold);
 }
 
 void Sphere::CollisionResponse(ManifoldPoint &point)

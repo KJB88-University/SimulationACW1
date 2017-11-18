@@ -1,3 +1,2 @@
-﻿  Game.cpp
-  SimulationLoop.vcxproj -> C:\SimulationLoop_2017-18\Debug\SimulationLoop.exe
-  SimulationLoop.vcxproj -> C:\SimulationLoop_2017-18\Debug\SimulationLoop.pdb (Full PDB)
+﻿  PhysicsManager.cpp
+c:\simulationloop_2017-18\simulationloop\physicsmanager.cpp(156): error C2059: syntax error: '}'

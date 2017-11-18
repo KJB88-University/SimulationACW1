@@ -22,9 +22,9 @@ public:
 	const ObjectType objType;
 
 	// 'Properties'
-	virtual Vector3f GetPos() const;
-	virtual float GetMass() const;
-	virtual int GetID() const;
+	virtual Vector3f GetPos(void) const;
+	virtual float GetMass(void) const;
+	virtual int GetID(void) const;
 
 	// Simulation Loop Methods
 	virtual void CalculatePhysics(float dt, double t) = 0;

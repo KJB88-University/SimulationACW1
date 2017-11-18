@@ -1,7 +1,7 @@
 #include "Plane.h"
 
-Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4) :
-	Geometry((p4 - p2), 1.0f, true, objType)
+Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector3f normal) :
+	Geometry((p4 - p2), 1.0f, true, objType), normal(normal)
 {
 	//Initialize Bounds[]
 	m_Bounds.emplace_back(p1);

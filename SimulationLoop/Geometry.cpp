@@ -38,4 +38,3 @@ void Geometry::SetPos(Vector3f inPos)
 	m_pos = inPos;
 }
 
-

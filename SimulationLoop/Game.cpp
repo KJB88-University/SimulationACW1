@@ -26,7 +26,8 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-left
 			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-right
 			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-right
-			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable) // Top-left
+			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-left
+			Vector3f(0.0f, 0.0f, 1.0f) // Normal
 		)
 	);
 
@@ -38,7 +39,9 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-left
 			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-right
 			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-right
-			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable) // Top-left
+			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-left
+			Vector3f(0.0f, 0.0f, -1.0f) // Normal
+		
 		)
 	);
 
@@ -50,7 +53,8 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-left
 			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-right
 			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-right
-			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable) // Top-left
+			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-left
+			Vector3f(1.0f, 0.0f, 0.0f) // Normal
 		)
 	);
 
@@ -62,7 +66,8 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-left
 			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-right
 			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-right
-			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable) // Top-left
+			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-left
+			Vector3f(-1.0f, 0.0f, 0.0f) // Normal
 		)
 	);
 

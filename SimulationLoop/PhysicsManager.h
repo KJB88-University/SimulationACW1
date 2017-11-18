@@ -35,8 +35,6 @@ public:
 
 	// DETECTION
 	void CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold* contactManifold);
-	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
-	void SphereToPlaneCollisionDetection(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold);
 
 	// RESPONSE
 	void SphereToSphereCollisionResponse(ManifoldPoint &point);
@@ -54,21 +52,32 @@ public:
 
 private:
 
-	// RUNGE-KUTTA FOURTH ORDER
-	void RK4Integrate(State* state, double t, float dt);
-	Differential RK4Evaluate(State* initial, double t, float dt, Differential diff);
-	Vector3f ApplyExternalForces(const State* state, const double t);
-
-
 	// Private constructor to avoid instances being created
 	PhysicsManager(void);
 
 	// Instance of this manager
 	static PhysicsManager* instance;
 
+	// COLLISION DETECTION
+	int maxIterations = 5; // Maximum no. of iterations for precise collision detection
+
 	// Coefficient of Restitution
 	float m_CoR;
 
 	// Acceleration due to Gravity
 	const float m_gravity = -9.81f;
+
+	// COLLISION DETECTION
+	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
+	void SphereToPlaneCollisionDetection(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold);
+	float IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float dt);
+
+	// RUNGE-KUTTA FOURTH ORDER
+	void RK4Integrate(State* state, double t, float dt);
+	Differential RK4Evaluate(State* initial, double t, float dt, Differential diff);
+	Vector3f ApplyExternalForces(const State* state, const double t);
+
+
+
+
 };
