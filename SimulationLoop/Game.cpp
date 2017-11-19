@@ -507,13 +507,13 @@ void Game::Render()									// Here's Where We Do All The Drawing
 		boxQuads[i]->Render();
 	}
 
-
 	// SPHERES
 	glEnable(GL_TEXTURE_2D);
 	for (int i = 0; i < static_cast<int>(objVector.size()); ++i)
 	{
 		objVector[i]->Render();
 	}
+
 	SwapBuffers(m_hdc);				// Swap Buffers (Double Buffering)
 }
 

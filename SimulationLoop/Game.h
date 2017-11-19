@@ -15,6 +15,7 @@ using namespace std;
 class Game
 {
 public:
+
 	// Modify the scale of the simulation by this
 	const static float scaleTweakable;
 
@@ -23,7 +24,12 @@ public:
 
 	void Update();
 
+	Hemisphere* hemisphere;
+	vector<Geometry*> objVector;
+	vector<Plane*> boxQuads;
+
 private:
+
 	void CheckInput();
 	void SimulationLoop();
 	void CalculateObjectPhysics();
@@ -32,19 +38,8 @@ private:
 	void UpdateObjectPhysics();
 	void Render();
 
-	//void SetupBalls();
-
-	//void ResetSim();
-
-private:
-
 	PhysicsManager* physicsManager;
 	InputManager* inputManager;
-
-	Hemisphere* hemisphere;
-	vector<Geometry*> objVector;
-	vector<Plane*> boxQuads;
-
 
 	HDC   m_hdc;
 

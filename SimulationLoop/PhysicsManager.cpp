@@ -113,52 +113,97 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	}
 }
 
-float PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float dt)
+void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float dt)
 {
-	float currentDT;
-	Vector3f pos1;
-	Vector3f pos2;
-	Vector3f vel1;
+#pragma region VAR DELCARATION
 
+	// deltaTime checks
+	float currentDT = dt;
+	float lastDT;
+
+	// Sphere1's variables
+	Vector3f pos1 = sphere1->GetPos();
+	Vector3f vel1 = sphere1->GetVel();
+	Vector3f testPos;
+
+	// Sphere2's variables
 	Sphere* sphere2;
-	Plane* plane1;
+	Vector3f pos2;
 
+	// Plane variables
+	Plane* plane1;
+	Vector3f planeNormal;
 	vector<Vector3f> bounds;
 
+	// Safest position
 	Vector3f safePosition;
 
+#pragma endregion
+
+#pragma region OBJECT DETERMINATION
 	// Object determination
 	if (geometry1->objType == SPHERE)
 	{
 		sphere2 = static_cast<Sphere*>(geometry1);
-		pos1 = sphere1->GetPos();
-		vel1 = sphere1->GetVel();
+		pos2 = sphere2->GetPos();
 	}
 	else if (geometry1->objType == PLANE)
 	{
 		plane1 = static_cast<Plane*>(geometry1);
 		bounds = plane1->GetBounds();
-		Vector3f planeNormal1 = bounds[1] - bounds[0];
-		Vector3f planeNormal2 = bounds[2] - bounds[1];
+		Vector3f planeNormal = plane1->normal;
 	}
 	
-	// Iterative testing for collisions
-	float distance;
+#pragma endregion
+
+#pragma region ITERATIVE COLLISION DETECTION
+
+	// LOOP - Iterative testing for collisions
 	for (int i = 0; i < maxIterations; i++)
 	{
+		// Update positions to test
+		testPos = pos1 + (vel1 * currentDT);
+
+		float distance;
+
+		// Sphere-to-sphere radius check
 		if (geometry1->objType == SPHERE)
 		{
-			distance = pos1.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
+			distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
 		}
+
+		// Sphere-to-Plane normal check
 		else if (geometry1->objType == PLANE)
 		{
-			Vector3f tempVector3f = pos1 - bounds[0];
-			tempVector3f.dot(
-			float normal = 
+			Vector3f tempVector3f = testPos - bounds[0];
+			distance = tempVector3f.dot(planeNormal);
+		}
+
+		// Save previous DT before we change current DT
+		lastDT = currentDT;
+
+		// If distance is greater than 0,
+		// we're 'above' the plane
+		// NO COLLISION
+		if (distance > 0)
+		{
+			safePosition = testPos;
+			currentDT = currentDT / 2; // Halve currentDT, to get next DT
+		}
+
+		// If distance is less than or equal to 0,
+		// we have passed through the plane or are currently intersecting
+		// COLLISION DETECTED
+		else if (distance <= 0)
+		{
+			lastDT = currentDT; // Save previousDT
+			currentDT = currentDT + lastDT;
 		}
 	}
 
-	return 0.0f;
+#pragma endregion
+
+	// TODO - ADD TO CONTACT MANIFOLD + TIME OF IMPACT
 }
 
 void PhysicsManager::SphereToSphereCollisionDetection

@@ -9,6 +9,8 @@ struct ManifoldPoint
 	Sphere *contactID1;
 	Sphere *contactID2;
 	Vector3f contactNormal;
+	float collisionTime;
+
 };
 
 class ContactManifold
