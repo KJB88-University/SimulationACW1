@@ -23,6 +23,17 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	(
 		new Plane
 		(
+			Vector3f(0.0f, 0.0f, -5 * scaleTweakable),
+			5.0f * scaleTweakable,
+			5.0f * scaleTweakable,
+			Vector3f(0.0f, 0.0f, 1.0f),
+			Vector3f(0.0f, -1.0f, 0.0f),
+			Vector3f(0.0f, -1.0f, 0.0f)
+		)
+	);
+	/*
+		new Plane
+		(
 			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-left
 			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-right
 			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-right
@@ -30,6 +41,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0.0f, 0.0f, 1.0f) // Normal
 		)
 	);
+	*/
 
 	// 'Back' face
 	boxQuads.emplace_back

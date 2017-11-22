@@ -1,5 +1,38 @@
 #include "Plane.h"
 
+Plane::Plane(Vector3f origin, float width, float depth, Vector3f normal, Vector3f right, Vector3f forward) :
+	Geometry(origin, 1.0f, true, objType), normal(normal), forward(forward), right(right)
+{
+	Vector3f tempPos;
+
+	// TODO - Spawn correct planes in GAME
+	// DEFINE CORNERS
+	// Top Left
+	tempPos = origin;
+	tempPos.SetZ(tempPos.GetZ() + -depth);
+	tempPos.SetX(tempPos.GetX() + -width);
+	m_Bounds.emplace_back(tempPos);
+
+	// Top Right
+	tempPos = origin;
+	tempPos.SetZ(tempPos.GetZ() + -depth);
+	tempPos.SetX(tempPos.GetX() + width);
+	m_Bounds.emplace_back(tempPos);
+
+	// Bottom Right
+	tempPos = origin;
+	tempPos.SetZ(tempPos.GetZ() + depth);
+	tempPos.SetX(tempPos.GetX() + width);
+	m_Bounds.emplace_back(tempPos);
+
+	// Bottom Left
+	tempPos = origin;
+	tempPos.SetZ(tempPos.GetZ() + depth);
+	tempPos.SetX(tempPos.GetX() + -width);
+	m_Bounds.emplace_back(tempPos);
+
+}
+
 Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector3f normal) :
 	Geometry((p4 - p2), 1.0f, true, objType), normal(normal)
 {
@@ -8,6 +41,7 @@ Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector3f normal
 	m_Bounds.emplace_back(p2);
 	m_Bounds.emplace_back(p3);
 	m_Bounds.emplace_back(p4);
+
 
 }
 
