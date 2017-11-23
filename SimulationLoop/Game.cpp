@@ -3,6 +3,7 @@
 #include <gl\GLU.h>
 #include <iostream>
 #include "Hemisphere.h"
+#include "PlaneRotation.h"
 
 const float Game::scaleTweakable = 10;
 
@@ -19,72 +20,108 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 #pragma region PLANES
 
 	// 'Front' face
-	boxQuads.emplace_back
+	objVector.emplace_back
+	(
+		new Plane
+		(
+			Vector3f(0.0f, 0.0f, 5 * scaleTweakable),
+			5.0f * scaleTweakable,
+			7.5f * scaleTweakable,
+			Vector3f(0.0f, 0.0f, -1.0f),
+			Vector3f(0.0f, 1.0f, 0.0f),
+			Vector3f(-1.0f, 0.0, 0.0f),
+			Z_AXIS
+		)
+	);
+
+	// 'Back' face
+	objVector.emplace_back
 	(
 		new Plane
 		(
 			Vector3f(0.0f, 0.0f, -5 * scaleTweakable),
 			5.0f * scaleTweakable,
-			5.0f * scaleTweakable,
+			7.5f * scaleTweakable,
 			Vector3f(0.0f, 0.0f, 1.0f),
-			Vector3f(0.0f, -1.0f, 0.0f),
-			Vector3f(0.0f, -1.0f, 0.0f)
+			Vector3f(0.0f, 1.0f, 0.0f),
+			Vector3f(1.0f, 0.0f, 0.0f),
+			Z_AXIS
 		)
 	);
-	/*
-		new Plane
-		(
-			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-left
-			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-right
-			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-right
-			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-left
-			Vector3f(0.0f, 0.0f, 1.0f) // Normal
-		)
-	);
-	*/
 
-	// 'Back' face
-	boxQuads.emplace_back
-	(
-		new Plane
-		(
-			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-left
-			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-right
-			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-right
-			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-left
-			Vector3f(0.0f, 0.0f, -1.0f) // Normal
-		
-		)
-	);
 
 	// 'Left' face
-	boxQuads.emplace_back
+	objVector.emplace_back
 	(
 		new Plane
 		(
-			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-left
-			Vector3f(-5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-right
-			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-right
-			Vector3f(-5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-left
-			Vector3f(1.0f, 0.0f, 0.0f) // Normal
+			Vector3f(-5 * scaleTweakable, 0.0f, 0.0f),
+			5.0f * scaleTweakable,
+			7.5f * scaleTweakable,
+			Vector3f(0.0f, 0.0f, 1.0f),
+			Vector3f(0.0f, 1.0f, 0.0f),
+			Vector3f(0.0f, 0.0f, 1.0f),
+			X_AXIS
 		)
 	);
 
 	// 'Right' face
-	boxQuads.emplace_back
+	objVector.emplace_back
 	(
 		new Plane
 		(
-			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, -5 * scaleTweakable), // Bottom-left
-			Vector3f(5 * scaleTweakable, -7.5 * scaleTweakable, 5 * scaleTweakable), // Bottom-right
-			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, 5 * scaleTweakable), // Top-right
-			Vector3f(5 * scaleTweakable, 7.5 * scaleTweakable, -5 * scaleTweakable), // Top-left
-			Vector3f(-1.0f, 0.0f, 0.0f) // Normal
+			Vector3f(5 * scaleTweakable, 0.0f, 0.0f),
+			5.0f * scaleTweakable,
+			7.5f * scaleTweakable,
+			Vector3f(-1.0f, 0.0f, 0.0f),
+			Vector3f(0.0f, 1.0f, 0.0f),
+			Vector3f(0.0f, 0.0f, -1.0f),
+			X_AXIS
 		)
 	);
 
 #pragma endregion
 
+#pragma region TRAYS
+	objVector.emplace_back
+	(
+		new Tray
+		(
+			Vector3f(0.0f, -4.5f * scaleTweakable, 0.0),
+			5.0f * scaleTweakable,
+			5.0f * scaleTweakable,
+			Vector3f(0.0f, -1.0f, 0.0f),
+			Vector3f(0.0f, 0.0f, 1.0f),
+			Vector3f(1.0f, 0.0f, 0.0f)
+		)
+	);
+
+	objVector.emplace_back
+	(
+		new Tray
+		(
+			Vector3f(0.0f, 0.0f * scaleTweakable, 0.0),
+			5.0f * scaleTweakable,
+			5.0f * scaleTweakable,
+			Vector3f(0.0f, -1.0f, 0.0f),
+			Vector3f(0.0f, 0.0f, 1.0f),
+			Vector3f(1.0f, 0.0f, 0.0f)
+		)
+	);
+
+	objVector.emplace_back
+	(
+		new Tray
+		(
+			Vector3f(0.0f, 4.5f * scaleTweakable, 0.0),
+			5.0f * scaleTweakable,
+			5.0f * scaleTweakable,
+			Vector3f(0.0f, -1.0f, 0.0f),
+			Vector3f(0.0f, 0.0f, 1.0f),
+			Vector3f(1.0f, 0.0f, 0.0f)
+		)
+	);
+#pragma endregion
 #pragma region SPHERES
 
 	objVector.emplace_back
@@ -113,7 +150,11 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 
 #pragma endregion
 
-	hemisphere = new Hemisphere(Vector3f(0.0f, 7.5f * scaleTweakable, 0.0f), 1.0f, 20.0f * scaleTweakable);
+	// Hemisphere
+	objVector.emplace_back
+	(
+		new Hemisphere(Vector3f(0.0f, 7.5f * scaleTweakable, 0.0f), 1.0f, 20.0f * scaleTweakable)
+	);
 
 	// Manifold
 	m_manifold = new ContactManifold();
@@ -153,7 +194,8 @@ void Game::CheckInput()
 	if (inputManager->CheckKeyPress('1'))
 	{
 		// TODO - ADD BALL
-		objVector.emplace_back(new Sphere(
+		objVector.emplace_back(
+			new Sphere(
 			Vector3f(0, 0, 0),
 			Vector3f(0.5, 0, 0),
 			75.0f,
@@ -445,7 +487,15 @@ void Game::CalculateObjectPhysics()
 	int length = objVector.size();
 	for (int i = 0; i < length; i++)
 	{
-		objVector[i]->CalculatePhysics(m_dt, gameTime);
+		if (objVector[i]->objType == SPHERE)
+		{
+			objVector[i]->CalculatePhysics(m_dt, gameTime);
+		}
+		else if (objVector[i]->objType == TRAY)
+		{
+			// TODO TRAY
+		}
+
 	}
 }
 
@@ -483,7 +533,15 @@ void Game::UpdateObjectPhysics()
 	// Update objects
 	for (int i = 0; i < static_cast<int>(objVector.size()); ++i)
 	{
-		objVector[i]->Update();
+		if (objVector[i]->objType == SPHERE)
+		{
+			objVector[i]->Update();
+		}
+		else if (objVector[i]->objType == TRAY)
+		{
+			// TODO TRAY
+		}
+
 	}
 }
 
@@ -509,18 +567,7 @@ void Game::Render()									// Here's Where We Do All The Drawing
 	//glVertex3d(-50, -20, 50);
 	//glEnd();
 
-	// BOWL
-	hemisphere->Render();
-
-	// BOX
-	glDisable(GL_TEXTURE_2D);
-	for (int i = 0; i < static_cast<int>(boxQuads.size()); ++i)
-	{
-		boxQuads[i]->Render();
-	}
-
-	// SPHERES
-	glEnable(GL_TEXTURE_2D);
+	// GEOMETRY
 	for (int i = 0; i < static_cast<int>(objVector.size()); ++i)
 	{
 		objVector[i]->Render();

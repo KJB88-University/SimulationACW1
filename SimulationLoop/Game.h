@@ -9,7 +9,7 @@
 #include "PhysicsManager.h"
 #include "Plane.h"
 #include "Hemisphere.h"
-
+#include "Tray.h"
 using namespace std;
 
 class Game
@@ -27,6 +27,7 @@ public:
 	Hemisphere* hemisphere;
 	vector<Geometry*> objVector;
 	vector<Plane*> boxQuads;
+	vector<Tray*> trayQuads;
 
 private:
 

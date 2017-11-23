@@ -1,53 +1,68 @@
 #include "Plane.h"
 
-Plane::Plane(Vector3f origin, float width, float depth, Vector3f normal, Vector3f right, Vector3f forward) :
+Plane::Plane(Vector3f origin, float width, float length, Vector3f normal, Vector3f right, Vector3f forward, PlaneRotation inRotation) :
 	Geometry(origin, 1.0f, true, objType), normal(normal), forward(forward), right(right)
 {
 	Vector3f tempPos;
 
-	// TODO - Spawn correct planes in GAME
 	// DEFINE CORNERS
 	// Top Left
 	tempPos = origin;
-	tempPos.SetZ(tempPos.GetZ() + -depth);
-	tempPos.SetX(tempPos.GetX() + -width);
+	tempPos.SetY(tempPos.GetY() + -length);
+	if (inRotation == Z_AXIS)
+	{
+		tempPos.SetX(tempPos.GetX() + -width);
+	}
+	else if (inRotation == X_AXIS)
+	{
+		tempPos.SetZ(tempPos.GetZ() + -width);
+	}
 	m_Bounds.emplace_back(tempPos);
 
 	// Top Right
 	tempPos = origin;
-	tempPos.SetZ(tempPos.GetZ() + -depth);
-	tempPos.SetX(tempPos.GetX() + width);
+	tempPos.SetY(tempPos.GetY() + -length);
+	if (inRotation == Z_AXIS)
+	{
+		tempPos.SetX(tempPos.GetX() + width);
+	}
+	else if (inRotation == X_AXIS)
+	{
+		tempPos.SetZ(tempPos.GetZ() + width);
+	}
 	m_Bounds.emplace_back(tempPos);
 
 	// Bottom Right
 	tempPos = origin;
-	tempPos.SetZ(tempPos.GetZ() + depth);
-	tempPos.SetX(tempPos.GetX() + width);
+	tempPos.SetY(tempPos.GetY() + length);
+	if (inRotation == Z_AXIS)
+	{
+		tempPos.SetX(tempPos.GetX() + width);
+	}
+	else if (inRotation == X_AXIS)
+	{
+		tempPos.SetZ(tempPos.GetZ() + width);
+	}
 	m_Bounds.emplace_back(tempPos);
 
 	// Bottom Left
 	tempPos = origin;
-	tempPos.SetZ(tempPos.GetZ() + depth);
-	tempPos.SetX(tempPos.GetX() + -width);
+	tempPos.SetY(tempPos.GetY() + length);
+	if (inRotation == Z_AXIS)
+	{
+		tempPos.SetX(tempPos.GetX() + -width);
+	}
+	else if (inRotation == X_AXIS)
+	{
+		tempPos.SetZ(tempPos.GetZ() + -width);
+	}
 	m_Bounds.emplace_back(tempPos);
-
-}
-
-Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector3f normal) :
-	Geometry((p4 - p2), 1.0f, true, objType), normal(normal)
-{
-	//Initialize Bounds[]
-	m_Bounds.emplace_back(p1);
-	m_Bounds.emplace_back(p2);
-	m_Bounds.emplace_back(p3);
-	m_Bounds.emplace_back(p4);
-
 
 }
 
 Plane::~Plane(void)
 {
-	
+
 }
 
 /*
@@ -86,6 +101,7 @@ vector<Vector3f> Plane::GetBounds(void) const
 void Plane::Render(void) const
 {
 	// Draw plane (at y=-20)
+	glDisable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glBegin(GL_QUADS);
@@ -97,5 +113,6 @@ void Plane::Render(void) const
 	glEnd();
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_TEXTURE_2D);
 }
 

@@ -11,8 +11,8 @@
 
 #pragma region CONSTRUCTOR_DESTRUCTOR
 
-Hemisphere::Hemisphere(Vector3f pos, float mass, float radius)
-	: m_radius(radius), m_pos(pos), m_mass(mass)
+Hemisphere::Hemisphere(Vector3f pos, float mass, float radius) :
+	Geometry(pos, mass, true, BOWL), m_radius(radius)
 {
 	//m_texture = TextureLoader::LoadBMP("checker.bmp");
 
@@ -34,6 +34,26 @@ float Hemisphere::GetRadius() const
 }
 
 #pragma endregion
+
+void Hemisphere::CalculatePhysics(float dt, double t)
+{
+
+}
+
+void Hemisphere::CollisionDetection(Geometry* geometry, ContactManifold* contactManifold)
+{
+
+}
+
+void Hemisphere::CollisionResponse(ManifoldPoint &point)
+{
+
+}
+
+void Hemisphere::Update(void)
+{
+
+}
 
 void Hemisphere::Render() const
 {

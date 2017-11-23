@@ -7,7 +7,7 @@
 #include "Geometry.h"
 #include <gl\GLU.h>
 
-class Hemisphere
+class Hemisphere : public Geometry
 {
 public:
 	// Constructor / Destructor
@@ -16,18 +16,19 @@ public:
 
 	// Hemisphere-specific Properties
 	float GetRadius(void) const;
-	Vector3f GetPos(void) const;
-	float GetMass(void) const;
 
-	void ResetPos(void);
+	// Simulation Loop Methods
+	virtual void CalculatePhysics(float dt, double t);
+	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold);
+	virtual void CollisionResponse(ManifoldPoint &point);
+
+	virtual void Update(void);
 
 	void Render(void) const;
 
 private:
 
-	Vector3f m_pos;
 	float m_radius;
-	float m_mass;
 
 	// Clip section
 	const double planeEqn[4] = { 0.0f, -1.0f, -0.0f, -0.0f };

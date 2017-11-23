@@ -4,5 +4,6 @@ enum ObjectType
 {
 	SPHERE,
 	PLANE,
-	TRAY
+	TRAY,
+	BOWL
 };

@@ -43,7 +43,6 @@ public:
 private:
 	
 	// Sphere-specific data members
-	ObjectType objType = SPHERE;
 	float m_radius;
 	Vector3f m_newPos;
 	Vector3f m_velocity;
