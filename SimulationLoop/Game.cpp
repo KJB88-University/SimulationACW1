@@ -6,6 +6,7 @@
 #include "PlaneRotation.h"
 
 const float Game::scaleTweakable = 10;
+float Game::m_dt = 0;
 
 // Constructor
 Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
@@ -16,6 +17,60 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	// Create / Get Managers
 	inputManager = InputManager::GetInstance();
 	physicsManager = PhysicsManager::GetInstance();
+
+#pragma region TRAYS
+
+	// Tray 1
+	tray1 = new Plane
+	(
+		Vector3f(-5.0f * scaleTweakable, -4.5f * scaleTweakable, 5.0f * scaleTweakable),
+		Vector3f(5.0f * scaleTweakable, -4.5f * scaleTweakable, 5.0f * scaleTweakable),
+		Vector3f(5.0f * scaleTweakable, -4.5f * scaleTweakable, -5.0f * scaleTweakable),
+		Vector3f(-5.0f * scaleTweakable, -4.5f * scaleTweakable, -5.0f * scaleTweakable),
+		Vector3f(0.0f, -1.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, 1.0f),
+		Vector3f(1.0f, 0.0f, 0.0f)
+	);
+	tray1->SetupTray();
+	objVector.emplace_back
+	(
+		tray1
+	);
+	
+
+	// Tray 2
+	objVector.emplace_back
+	(
+		new Plane
+		(
+			Vector3f(-5.0f * scaleTweakable, 0.0f * scaleTweakable, 5.0f * scaleTweakable),
+			Vector3f(5.0f * scaleTweakable, 0.0f * scaleTweakable, 5.0f * scaleTweakable),
+			Vector3f(5.0f * scaleTweakable, 0.0f * scaleTweakable, -5.0f * scaleTweakable),
+			Vector3f(-5.0f * scaleTweakable, 0.0f * scaleTweakable, -5.0f * scaleTweakable),
+			Vector3f(0.0f, -1.0f, 0.0f),
+			Vector3f(0.0f, 0.0f, 1.0f),
+			Vector3f(1.0f, 0.0f, 0.0f)
+		)
+	);
+
+	// Tray 3
+	tray3 = new Plane
+	(
+		Vector3f(-5.0f * scaleTweakable, 4.5f * scaleTweakable, 5.0f * scaleTweakable),
+		Vector3f(5.0f * scaleTweakable, 4.5f * scaleTweakable, 5.0f * scaleTweakable),
+		Vector3f(5.0f * scaleTweakable, 4.5f * scaleTweakable, -5.0f * scaleTweakable),
+		Vector3f(-5.0f * scaleTweakable, 4.5f * scaleTweakable, -5.0f * scaleTweakable),
+		Vector3f(0.0f, -1.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, 1.0f),
+		Vector3f(1.0f, 0.0f, 0.0f)
+	);
+	tray3->SetupTray();
+	objVector.emplace_back
+	(
+		tray3
+	);
+
+#pragma endregion
 
 #pragma region PLANES
 
@@ -80,48 +135,10 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		)
 	);
 
+
+
 #pragma endregion
 
-#pragma region TRAYS
-	objVector.emplace_back
-	(
-		new Tray
-		(
-			Vector3f(0.0f, -4.5f * scaleTweakable, 0.0),
-			5.0f * scaleTweakable,
-			5.0f * scaleTweakable,
-			Vector3f(0.0f, -1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, 1.0f),
-			Vector3f(1.0f, 0.0f, 0.0f)
-		)
-	);
-
-	objVector.emplace_back
-	(
-		new Tray
-		(
-			Vector3f(0.0f, 0.0f * scaleTweakable, 0.0),
-			5.0f * scaleTweakable,
-			5.0f * scaleTweakable,
-			Vector3f(0.0f, -1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, 1.0f),
-			Vector3f(1.0f, 0.0f, 0.0f)
-		)
-	);
-
-	objVector.emplace_back
-	(
-		new Tray
-		(
-			Vector3f(0.0f, 4.5f * scaleTweakable, 0.0),
-			5.0f * scaleTweakable,
-			5.0f * scaleTweakable,
-			Vector3f(0.0f, -1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, 1.0f),
-			Vector3f(1.0f, 0.0f, 0.0f)
-		)
-	);
-#pragma endregion
 #pragma region SPHERES
 
 	objVector.emplace_back
@@ -131,8 +148,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0, 0, 0),
 			Vector3f(0.5, 0, 0),
 			0.02f,
-			0.5f * scaleTweakable,
-			false
+			0.5f * scaleTweakable
 		)
 	);
 
@@ -143,8 +159,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0, -15, 0),
 			Vector3f(-1.0, 20, 0),
 			0.02f,
-			0.5f * scaleTweakable,
-			false
+			0.5f * scaleTweakable
 		)
 	);
 
@@ -196,11 +211,10 @@ void Game::CheckInput()
 		// TODO - ADD BALL
 		objVector.emplace_back(
 			new Sphere(
-			Vector3f(0, 0, 0),
-			Vector3f(0.5, 0, 0),
-			75.0f,
-			5.0f,
-			false));
+				Vector3f(0, 0, 0),
+				Vector3f(0.5, 0, 0),
+				75.0f,
+				5.0f));
 	}
 
 	/*
@@ -213,21 +227,25 @@ void Game::CheckInput()
 	if (inputManager->CheckKeyPress('3'))
 	{
 		// TODO - Remove top tray
+		tray1->MoveTray();
 	}
 
 	if (inputManager->CheckKeyPress('4'))
 	{
-		// TODO - add bottom tray
+		// TODO - add top tray
+		tray1->MoveTray();
 	}
 
 	if (inputManager->CheckKeyPress('5'))
 	{
 		// TODO - Remove bottom tray
+		tray3->MoveTray();
 	}
 
 	if (inputManager->CheckKeyPress('6'))
 	{
 		// TODO - Add bottom tray
+		tray3->MoveTray();
 	}
 
 	if (inputManager->CheckKeyPress('R'))
@@ -487,15 +505,7 @@ void Game::CalculateObjectPhysics()
 	int length = objVector.size();
 	for (int i = 0; i < length; i++)
 	{
-		if (objVector[i]->objType == SPHERE)
-		{
-			objVector[i]->CalculatePhysics(m_dt, gameTime);
-		}
-		else if (objVector[i]->objType == TRAY)
-		{
-			// TODO TRAY
-		}
-
+		objVector[i]->CalculatePhysics(m_dt, gameTime);
 	}
 }
 
@@ -533,15 +543,7 @@ void Game::UpdateObjectPhysics()
 	// Update objects
 	for (int i = 0; i < static_cast<int>(objVector.size()); ++i)
 	{
-		if (objVector[i]->objType == SPHERE)
-		{
-			objVector[i]->Update();
-		}
-		else if (objVector[i]->objType == TRAY)
-		{
-			// TODO TRAY
-		}
-
+		objVector[i]->Update();
 	}
 }
 
@@ -551,7 +553,7 @@ void Game::Render()									// Here's Where We Do All The Drawing
 	// CAMERA SETUP
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();									// Reset The Current Modelview Matrix
-	
+
 	glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
 	glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
 	glTranslatef(pan_x, pan_y, pan_z);
@@ -567,6 +569,8 @@ void Game::Render()									// Here's Where We Do All The Drawing
 	//glVertex3d(-50, -20, 50);
 	//glEnd();
 
+	tray1->Render();
+	tray3->Render();
 	// GEOMETRY
 	for (int i = 0; i < static_cast<int>(objVector.size()); ++i)
 	{

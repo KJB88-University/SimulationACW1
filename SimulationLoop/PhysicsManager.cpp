@@ -107,10 +107,6 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	{
 		SphereToPlaneCollisionDetection(static_cast<Sphere*>(geometry1), static_cast<Plane*>(geometry2), contactManifold);
 	}
-	else if ((geometry1->objType == PLANE && geometry2->objType == SPHERE))
-	{
-		SphereToPlaneCollisionDetection(static_cast<Sphere*>(geometry2), static_cast<Plane*>(geometry1), contactManifold);
-	}
 }
 
 void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float dt)
@@ -210,7 +206,7 @@ void PhysicsManager::SphereToSphereCollisionDetection
 (Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold)
 {
 	// TODO - change to reliable Detection
-	/*
+	
 	Vector3f pos1 = sphere1->GetNewPos();
 	Vector3f pos2 = sphere2->GetNewPos();
 	float dist = pos1.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
@@ -222,7 +218,7 @@ void PhysicsManager::SphereToSphereCollisionDetection
 		mp.contactNormal = (pos2 - pos1).normalise();
 		contactManifold->Add(mp);
 	}
-	*/
+	
 }
 
 void PhysicsManager::SphereToPlaneCollisionDetection

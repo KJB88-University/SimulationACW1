@@ -32,6 +32,11 @@ Tray::Tray(Vector3f origin, float width, float length, Vector3f normal, Vector3f
 	m_Bounds.emplace_back(tempPos);
 }
 
+Tray::~Tray(void)
+{
+
+}
+
 void Tray::CalculatePhysics(float dt, double t)
 {
 
@@ -51,6 +56,7 @@ void Tray::Update(void)
 {
 
 }
+
 void Tray::Render() const
 {
 	// Draw plane (at y=-20)

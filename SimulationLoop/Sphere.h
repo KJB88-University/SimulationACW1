@@ -14,7 +14,7 @@ class Sphere : public Geometry
 {
 public:
 	// Constructor / Destructor
-	Sphere(Vector3f pos, Vector3f vel, float mass, float radius, bool isStatic);
+	Sphere(Vector3f pos, Vector3f vel, float mass, float radius);
 	~Sphere(void);
 
 	// Simulation Loop (from base/super)

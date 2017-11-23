@@ -103,7 +103,7 @@
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Tray.cpp">
-      <Filter>Source Files\Objects</Filter>
+      <Filter>Source Files\Deprecated</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -156,7 +156,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tray.h">
-      <Filter>Header Files\Objects</Filter>
+      <Filter>Header Files\Deprecated</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

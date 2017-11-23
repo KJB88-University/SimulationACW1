@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include "Game.h"
 
 Plane::Plane(Vector3f origin, float width, float length, Vector3f normal, Vector3f right, Vector3f forward, PlaneRotation inRotation) :
 	Geometry(origin, 1.0f, true, objType), normal(normal), forward(forward), right(right)
@@ -60,27 +61,79 @@ Plane::Plane(Vector3f origin, float width, float length, Vector3f normal, Vector
 
 }
 
+Plane::Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector3f normal, Vector3f right, Vector3f forward) :
+	Geometry((p4 - p2), 1.0f, false, PLANE), normal(normal), forward(forward), right(right)
+{
+	m_Bounds.emplace_back(p1);
+	m_Bounds.emplace_back(p2);
+	m_Bounds.emplace_back(p3);
+	m_Bounds.emplace_back(p4);
+
+	// Tray Control
+	hasTray = false;
+}
+
 Plane::~Plane(void)
 {
 
 }
 
-/*
-Plane::SetUpTray(void)
+
+void Plane::SetupTray(void)
 {
-
+	hasTray = true;
+	m_velocity = Vector3f(0.0f, 0.0f, 0.0f);
 }
-*/
 
+void Plane::MoveTray(void)
+{
+	trayMove = true;
+}
 
 void Plane::Update(void)
 {
+	// If we have a tray
+	if (hasTray)
+	{
+		// And it's not current moving
+		if (!trayLocked)
+		{
+			// Set the velocity of the tray to move out
+			if (trayMove && trayIn)
+			{
+				trayLocked = true;
+				m_velocity = Vector3f(1.0f * Game::scaleTweakable * m_dt, 0.0f, 0.0f);
 
+			}
+			// Set the velocity of the tray to move in
+			else if (trayMove && !trayIn)
+			{
+				trayLocked = true;
+				m_velocity = Vector3f(-1.0f * Game::scaleTweakable * m_dt, 0.0f, 0.0f);
+			}
+
+		}
+
+		// If we've reached maximum distance, cancel moving and lock
+		if (m_pos.GetX() >= (10.0f * Game::scaleTweakable))
+		{
+			trayMove = false;
+			trayLocked = false;
+		}
+		// If we've reached minimum distance, cancel moving and lock
+		else if (m_pos.GetX() <= 0.0f)
+		{
+			trayMove = false;
+			trayLocked = false;
+		}
+	}
+	//m_pos = m_pos + m_velocity;
+	// TODO - if plane reaches point, stop plane
 }
 
 void Plane::CalculatePhysics(float dt, double t)
 {
-
+	m_dt = dt;
 }
 
 void Plane::CollisionDetection(Geometry* geometry, ContactManifold* contactManifold)
@@ -106,10 +159,22 @@ void Plane::Render(void) const
 
 	glBegin(GL_QUADS);
 	glColor3d(1, 1, 1);
-	glVertex3d(m_Bounds[0].GetX(), m_Bounds[0].GetY(), m_Bounds[0].GetZ());
-	glVertex3d(m_Bounds[1].GetX(), m_Bounds[1].GetY(), m_Bounds[1].GetZ());
-	glVertex3d(m_Bounds[2].GetX(), m_Bounds[2].GetY(), m_Bounds[2].GetZ());
-	glVertex3d(m_Bounds[3].GetX(), m_Bounds[3].GetY(), m_Bounds[3].GetZ());
+	if (!hasTray)
+	{
+		glVertex3d(m_Bounds[0].GetX(), m_Bounds[0].GetY(), m_Bounds[0].GetZ());
+		glVertex3d(m_Bounds[1].GetX(), m_Bounds[1].GetY(), m_Bounds[1].GetZ());
+		glVertex3d(m_Bounds[2].GetX(), m_Bounds[2].GetY(), m_Bounds[2].GetZ());
+		glVertex3d(m_Bounds[3].GetX(), m_Bounds[3].GetY(), m_Bounds[3].GetZ());
+	}
+
+	else if (hasTray)
+	{
+		glVertex3d(m_Bounds[0].GetX() + m_velocity.GetX(), m_Bounds[0].GetY(), m_Bounds[0].GetZ());
+		glVertex3d(m_Bounds[1].GetX() + m_velocity.GetX(), m_Bounds[1].GetY(), m_Bounds[1].GetZ());
+		glVertex3d(m_Bounds[2].GetX() + m_velocity.GetX(), m_Bounds[2].GetY(), m_Bounds[2].GetZ());
+		glVertex3d(m_Bounds[3].GetX() + m_velocity.GetX(), m_Bounds[3].GetY(), m_Bounds[3].GetZ());
+	}
+
 	glEnd();
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

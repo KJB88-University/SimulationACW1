@@ -18,16 +18,14 @@ public:
 
 	// Modify the scale of the simulation by this
 	const static float scaleTweakable;
+	static float m_dt;
 
 	Game(HDC hdc);
 	~Game(void);
 
 	void Update();
 
-	Hemisphere* hemisphere;
 	vector<Geometry*> objVector;
-	vector<Plane*> boxQuads;
-	vector<Tray*> trayQuads;
 
 private:
 
@@ -45,13 +43,16 @@ private:
 	HDC   m_hdc;
 
 	double gameTime;
-	float m_dt;
+
 	float original_dt;
 	int	  m_fps;
 	float m_previousTime;
 
 	ContactManifold *m_manifold;
 	LARGE_INTEGER start, end, frequency;
+
+	Plane* tray1;
+	Plane* tray3;
 
 	// Time Tweakable
 	float timeScale = 1.0f;
