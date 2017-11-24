@@ -52,6 +52,7 @@ private:
 	LARGE_INTEGER start, end, frequency;
 
 	Plane* tray1;
+	Plane* tray2;
 	Plane* tray3;
 
 	// Time Tweakable

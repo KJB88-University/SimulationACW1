@@ -23,10 +23,16 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	// Tray 1
 	tray1 = new Plane
 	(
+		/*
 		Vector3f(-5.0f * scaleTweakable, -4.5f * scaleTweakable, 5.0f * scaleTweakable),
 		Vector3f(5.0f * scaleTweakable, -4.5f * scaleTweakable, 5.0f * scaleTweakable),
 		Vector3f(5.0f * scaleTweakable, -4.5f * scaleTweakable, -5.0f * scaleTweakable),
 		Vector3f(-5.0f * scaleTweakable, -4.5f * scaleTweakable, -5.0f * scaleTweakable),
+		*/
+		Vector3f(0.0f, -4.5f * scaleTweakable, 0.0f),
+		5.0f * scaleTweakable,
+		5.0f * scaleTweakable,
+		0.0f,
 		Vector3f(0.0f, -1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
@@ -36,30 +42,31 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	(
 		tray1
 	);
-	
+
 
 	// Tray 2
+	tray2 = new Plane
+	(
+		Vector3f(0.0f, 0.0f, 0.0f),
+		5.0f * scaleTweakable,
+		5.0f * scaleTweakable,
+		0.0f,
+		Vector3f(0.0f, -1.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, 1.0f),
+		Vector3f(1.0f, 0.0f, 0.0f)
+	);
 	objVector.emplace_back
 	(
-		new Plane
-		(
-			Vector3f(-5.0f * scaleTweakable, 0.0f * scaleTweakable, 5.0f * scaleTweakable),
-			Vector3f(5.0f * scaleTweakable, 0.0f * scaleTweakable, 5.0f * scaleTweakable),
-			Vector3f(5.0f * scaleTweakable, 0.0f * scaleTweakable, -5.0f * scaleTweakable),
-			Vector3f(-5.0f * scaleTweakable, 0.0f * scaleTweakable, -5.0f * scaleTweakable),
-			Vector3f(0.0f, -1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, 1.0f),
-			Vector3f(1.0f, 0.0f, 0.0f)
-		)
+		tray2
 	);
 
 	// Tray 3
 	tray3 = new Plane
 	(
-		Vector3f(-5.0f * scaleTweakable, 4.5f * scaleTweakable, 5.0f * scaleTweakable),
-		Vector3f(5.0f * scaleTweakable, 4.5f * scaleTweakable, 5.0f * scaleTweakable),
-		Vector3f(5.0f * scaleTweakable, 4.5f * scaleTweakable, -5.0f * scaleTweakable),
-		Vector3f(-5.0f * scaleTweakable, 4.5f * scaleTweakable, -5.0f * scaleTweakable),
+		Vector3f(0.0f, 4.5f * scaleTweakable, 0.0f),
+		5.0f * scaleTweakable,
+		5.0f * scaleTweakable,
+		0.0f,
 		Vector3f(0.0f, -1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
@@ -79,13 +86,13 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	(
 		new Plane
 		(
-			Vector3f(0.0f, 0.0f, 5 * scaleTweakable),
+			Vector3f(0.0f, 0.0f, 5.0f * scaleTweakable),
 			5.0f * scaleTweakable,
+			0.0f * scaleTweakable,
 			7.5f * scaleTweakable,
 			Vector3f(0.0f, 0.0f, -1.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(-1.0f, 0.0, 0.0f),
-			Z_AXIS
+			Vector3f(-1.0f, 0.0, 0.0f)
 		)
 	);
 
@@ -94,13 +101,13 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	(
 		new Plane
 		(
-			Vector3f(0.0f, 0.0f, -5 * scaleTweakable),
+			Vector3f(0.0f, 0.0f, -5.0f * scaleTweakable),
 			5.0f * scaleTweakable,
+			0.0f * scaleTweakable,
 			7.5f * scaleTweakable,
 			Vector3f(0.0f, 0.0f, 1.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(1.0f, 0.0f, 0.0f),
-			Z_AXIS
+			Vector3f(1.0f, 0.0f, 0.0f)
 		)
 	);
 
@@ -110,13 +117,13 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	(
 		new Plane
 		(
-			Vector3f(-5 * scaleTweakable, 0.0f, 0.0f),
+			Vector3f(-5.0f * scaleTweakable, 0.0f, 0.0f),
+			0.0f * scaleTweakable,
 			5.0f * scaleTweakable,
 			7.5f * scaleTweakable,
-			Vector3f(0.0f, 0.0f, 1.0f),
+			Vector3f(1.0f, 0.0f, 0.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, 1.0f),
-			X_AXIS
+			Vector3f(0.0f, 0.0f, 1.0f)
 		)
 	);
 
@@ -125,13 +132,13 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	(
 		new Plane
 		(
-			Vector3f(5 * scaleTweakable, 0.0f, 0.0f),
+			Vector3f(5.0f * scaleTweakable, 0.0f, 0.0f),
+			0.0f * scaleTweakable,
 			5.0f * scaleTweakable,
 			7.5f * scaleTweakable,
 			Vector3f(-1.0f, 0.0f, 0.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, -1.0f),
-			X_AXIS
+			Vector3f(0.0f, 0.0f, -1.0f)
 		)
 	);
 

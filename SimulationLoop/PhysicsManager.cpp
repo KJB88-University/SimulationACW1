@@ -146,8 +146,8 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 	else if (geometry1->objType == PLANE)
 	{
 		plane1 = static_cast<Plane*>(geometry1);
-		bounds = plane1->GetBounds();
-		Vector3f planeNormal = plane1->normal;
+		//bounds = plane1->GetBounds();
+		//Vector3f planeNormal = plane1->normal;
 	}
 	
 #pragma endregion

@@ -13,11 +13,11 @@ class Plane : public Geometry
 
 public:
 
-	Plane(Vector3f origin, float width, float depth, Vector3f normal, Vector3f right, Vector3f forward, PlaneRotation inRotation);
-	Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector3f normal, Vector3f right, Vector3f forward);
+	Plane(Vector3f origin, float width, float depth, float height, Vector3f normal, Vector3f right, Vector3f forward);
+	//Plane(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, Vector3f normal, Vector3f right, Vector3f forward);
 	~Plane(void);
 
-	vector<Vector3f> GetBounds(void) const;
+	//vector<Vector3f> GetBounds(void) const;
 	Vector3f normal;
 	Vector3f right;
 	Vector3f forward;
@@ -37,11 +37,14 @@ public:
 
 private:
 
+	float height;
+	float width;
+	float depth;
 	float m_dt;
 	Vector3f m_velocity;
 	ObjectType objType = PLANE;
 	bool hasTray = false;
 	bool trayIn = true;
 	bool trayLocked = false;
-	vector<Vector3f> m_Bounds;
+	//vector<Vector3f> m_Bounds;
 };
