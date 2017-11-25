@@ -20,7 +20,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 
 #pragma region TRAYS
 
-	// Tray 1
+	// Bottom Tray
 	tray1 = new Plane
 	(
 		/*
@@ -44,7 +44,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	);
 
 
-	// Tray 2
+	// Mid Tray
 	tray2 = new Plane
 	(
 		Vector3f(0.0f, 0.0f, 0.0f),
@@ -55,12 +55,13 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
 	);
+	tray2->SetupTray();
 	objVector.emplace_back
 	(
 		tray2
 	);
 
-	// Tray 3
+	// Top Tray
 	tray3 = new Plane
 	(
 		Vector3f(0.0f, 4.5f * scaleTweakable, 0.0f),
@@ -234,25 +235,25 @@ void Game::CheckInput()
 	if (inputManager->CheckKeyPress('3'))
 	{
 		// TODO - Remove top tray
-		tray1->MoveTray();
+		tray3->MoveTrayOut();
 	}
 
 	if (inputManager->CheckKeyPress('4'))
 	{
 		// TODO - add top tray
-		tray1->MoveTray();
+		tray3->MoveTrayIn();
 	}
 
 	if (inputManager->CheckKeyPress('5'))
 	{
 		// TODO - Remove bottom tray
-		tray3->MoveTray();
+		tray1->MoveTrayOut();
 	}
 
 	if (inputManager->CheckKeyPress('6'))
 	{
 		// TODO - Add bottom tray
-		tray3->MoveTray();
+		tray1->MoveTrayIn();
 	}
 
 	if (inputManager->CheckKeyPress('R'))
