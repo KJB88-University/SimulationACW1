@@ -109,7 +109,7 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	}
 }
 
-void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float dt)
+void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float dt)
 {
 #pragma region VAR DELCARATION
 
@@ -127,7 +127,7 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 	Vector3f pos2;
 
 	// Plane variables
-	Plane* plane1;
+	Plane* plane;
 	Vector3f planeNormal;
 	vector<Vector3f> bounds;
 
@@ -138,14 +138,14 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 
 #pragma region OBJECT DETERMINATION
 	// Object determination
-	if (geometry1->objType == SPHERE)
+	if (geometry->objType == SPHERE)
 	{
-		sphere2 = static_cast<Sphere*>(geometry1);
+		sphere2 = static_cast<Sphere*>(geometry);
 		pos2 = sphere2->GetPos();
 	}
-	else if (geometry1->objType == PLANE)
+	else if (geometry->objType == PLANE)
 	{
-		plane1 = static_cast<Plane*>(geometry1);
+		plane = static_cast<Plane*>(geometry);
 		//bounds = plane1->GetBounds();
 		//Vector3f planeNormal = plane1->normal;
 	}
@@ -163,13 +163,13 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 		float distance;
 
 		// Sphere-to-sphere radius check
-		if (geometry1->objType == SPHERE)
+		if (geometry->objType == SPHERE)
 		{
 			distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
 		}
 
 		// Sphere-to-Plane normal check
-		else if (geometry1->objType == PLANE)
+		else if (geometry->objType == PLANE)
 		{
 			Vector3f tempVector3f = testPos - bounds[0];
 			distance = tempVector3f.dot(planeNormal);
@@ -206,7 +206,7 @@ void PhysicsManager::SphereToSphereCollisionDetection
 (Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold)
 {
 	// TODO - change to reliable Detection
-	
+	/*
 	Vector3f pos1 = sphere1->GetNewPos();
 	Vector3f pos2 = sphere2->GetNewPos();
 	float dist = pos1.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
@@ -218,6 +218,7 @@ void PhysicsManager::SphereToSphereCollisionDetection
 		mp.contactNormal = (pos2 - pos1).normalise();
 		contactManifold->Add(mp);
 	}
+	*/
 	
 }
 

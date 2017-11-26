@@ -11,8 +11,6 @@ float Game::m_dt = 0;
 // Constructor
 Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 {
-	// Default gameTime
-	gameTime = 0;
 
 	// Create / Get Managers
 	inputManager = InputManager::GetInstance();
@@ -503,7 +501,7 @@ void Game::SimulationLoop()
 	// Update the physics calculations on all objects (e.g. new position, velocity, etc)
 	UpdateObjectPhysics();
 
-	gameTime += m_dt;
+	m_previousTime += m_dt;
 }
 
 
@@ -513,7 +511,7 @@ void Game::CalculateObjectPhysics()
 	int length = objVector.size();
 	for (int i = 0; i < length; i++)
 	{
-		objVector[i]->CalculatePhysics(m_dt, gameTime);
+		objVector[i]->CalculatePhysics(m_dt, m_previousTime);
 	}
 }
 
@@ -568,17 +566,8 @@ void Game::Render()									// Here's Where We Do All The Drawing
 
 	gluLookAt(0, 50, 100, 0, 0, 0, 0, 1, 0);
 
-	//// Draw plane (at y=-20)
-	//glBegin(GL_QUADS);
-	//glColor3d(1, 1, 1);
-	//glVertex3d(-50, -20, -50);
-	//glVertex3d(50, -20, -50);
-	//glVertex3d(50, -20, 50);
-	//glVertex3d(-50, -20, 50);
-	//glEnd();
-
-	tray1->Render();
-	tray3->Render();
+	//tray1->Render();
+	//tray3->Render();
 	// GEOMETRY
 	for (int i = 0; i < static_cast<int>(objVector.size()); ++i)
 	{

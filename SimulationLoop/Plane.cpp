@@ -58,7 +58,7 @@ void Plane::Update(void)
 				trayLocked = true; // Stop further input until transition is complete
 
 				// Give velocity to move
-				m_velocity = Vector3f(-1.0f * Game::scaleTweakable, 0.0f, 0.0f);
+				m_velocity = Vector3f(-1.0f * Game::scaleTweakable * 2.0f, 0.0f, 0.0f);
 			}
 		}
 

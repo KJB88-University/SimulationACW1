@@ -42,8 +42,6 @@ private:
 
 	HDC   m_hdc;
 
-	double gameTime;
-
 	float original_dt;
 	int	  m_fps;
 	float m_previousTime;
