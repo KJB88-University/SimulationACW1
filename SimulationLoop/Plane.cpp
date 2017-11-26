@@ -97,12 +97,12 @@ void Plane::Update(void)
 	// TODO - if plane reaches point, stop plane
 }
 
-void Plane::CalculatePhysics(float dt, double t)
+void Plane::CalculatePhysics(float dt, float t)
 {
 	m_dt = dt;
 }
 
-void Plane::CollisionDetection(Geometry* geometry, ContactManifold* contactManifold)
+void Plane::CollisionDetection(Geometry* geometry, ContactManifold* contactManifold, float t, float dt)
 {
 
 }

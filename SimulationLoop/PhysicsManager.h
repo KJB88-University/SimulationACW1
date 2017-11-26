@@ -4,6 +4,7 @@
 #include "ContactManifold.h"
 #include "Geometry.h"
 #include "Sphere.h"
+#include "Game.h"
 
 class PhysicsManager
 {
@@ -31,10 +32,10 @@ public:
 	// ALL SIMULATION STEPS UPDATE OBJECT VIA POINTERS
 	// NO RETURN VALUES NECESSARY
 	// PRE-COLLISION PHYSICS
-	void CalculatePrePhysics(Sphere* sphere, double t, float dt);
+	void CalculatePrePhysics(Sphere* sphere, float t, float dt);
 
 	// DETECTION
-	void CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold* contactManifold);
+	void CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold* contactManifold, float t, float dt);
 
 	// RESPONSE
 	void SphereToSphereCollisionResponse(ManifoldPoint &point);
@@ -70,12 +71,12 @@ private:
 	// COLLISION DETECTION
 	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
 	void SphereToPlaneCollisionDetection(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold);
-	void IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float dt);
+	void IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float t, float dt);
 
 	// RUNGE-KUTTA FOURTH ORDER
-	void RK4Integrate(State* state, double t, float dt);
-	Differential RK4Evaluate(State* initial, double t, float dt, Differential diff);
-	Vector3f ApplyExternalForces(const State* state, const double t);
+	void RK4Integrate(State* state, float t, float dt);
+	Differential RK4Evaluate(State* initial, float t, float dt, Differential diff);
+	Vector3f ApplyExternalForces(const State* state, const float t);
 
 
 

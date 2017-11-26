@@ -31,10 +31,10 @@ public:
 	bool trayMove = false;
 
 	// Simulation Loop Methods
-	virtual void CalculatePhysics(float dt, double t);
-	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold);
-	virtual void CollisionResponse(ManifoldPoint &point);
-	virtual void Update();
+	virtual void CalculatePhysics(float dt, float t) override;
+	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold, float t, float dt) override;
+	virtual void CollisionResponse(ManifoldPoint &point) override;
+	virtual void Update() override;
 
 	virtual void Render() const;
 

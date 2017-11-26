@@ -88,7 +88,7 @@ Vector3f Sphere::GetAccel() const
 #pragma endregion
 
 #pragma region SIMULATION_LOOP
-void Sphere::CalculatePhysics(float dt, double t)
+void Sphere::CalculatePhysics(float dt, float t)
 {
 	// Calcuate total force for this sphere, e.g. F = F1+F2+F3+...
 	//m_force = Vector3f(0.0f, -9.81f * k_mass, 0.0f);
@@ -113,9 +113,9 @@ void Sphere::CalculatePhysics(float dt, double t)
 	
 }
 
-void Sphere::CollisionDetection(Geometry* geometry2, ContactManifold *contactManifold)
+void Sphere::CollisionDetection(Geometry* geometry2, ContactManifold *contactManifold, float t, float dt)
 {
-	physics->CollisionDetection(this, static_cast<Sphere*>(geometry2), contactManifold);
+	physics->CollisionDetection(this, static_cast<Sphere*>(geometry2), contactManifold, t, dt);
 }
 
 void Sphere::CollisionResponse(ManifoldPoint &point)

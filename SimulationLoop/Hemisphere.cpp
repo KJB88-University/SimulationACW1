@@ -35,12 +35,12 @@ float Hemisphere::GetRadius() const
 
 #pragma endregion
 
-void Hemisphere::CalculatePhysics(float dt, double t)
+void Hemisphere::CalculatePhysics(float dt, float t)
 {
 
 }
 
-void Hemisphere::CollisionDetection(Geometry* geometry, ContactManifold* contactManifold)
+void Hemisphere::CollisionDetection(Geometry* geometry, ContactManifold* contactManifold, float dt, float t)
 {
 
 }

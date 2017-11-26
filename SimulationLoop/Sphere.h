@@ -18,8 +18,8 @@ public:
 	~Sphere(void);
 
 	// Simulation Loop (from base/super)
-	virtual void CalculatePhysics(float dt, double t) override;
-	virtual void CollisionDetection(Geometry* sphere, ContactManifold *contactManifold) override;
+	virtual void CalculatePhysics(float dt, float t) override;
+	virtual void CollisionDetection(Geometry* sphere, ContactManifold *contactManifold, float t, float dt) override;
 	virtual void Update() override;
 	virtual void CollisionResponse(ManifoldPoint &point) override;
 

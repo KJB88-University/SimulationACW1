@@ -26,9 +26,9 @@ PhysicsManager::PhysicsManager()
 // <https://gafferongames.com/post/integration_basics/>
 // [1st June 2014],
 // Accessed on: 7th November 2017.
-#pragma region RK4 Integration Implementation
+#pragma region RK4 Integration
 
-void PhysicsManager::CalculatePrePhysics(Sphere* sphere, double t, float dt)
+void PhysicsManager::CalculatePrePhysics(Sphere* sphere, float t, float dt)
 {
 	// Setup required structs
 	State state = State();
@@ -47,7 +47,7 @@ void PhysicsManager::CalculatePrePhysics(Sphere* sphere, double t, float dt)
 }
 
 
-void PhysicsManager::RK4Integrate(State* state, double t, float dt)
+void PhysicsManager::RK4Integrate(State* state, float t, float dt)
 {
 	// Declare required steps
 	Differential k1, k2, k3, k4;
@@ -67,7 +67,7 @@ void PhysicsManager::RK4Integrate(State* state, double t, float dt)
 	state->velocity = state->velocity + dvdt * dt;
 }
 
-PhysicsManager::Differential PhysicsManager::RK4Evaluate(State* initial, double t, float dt, Differential diff)
+PhysicsManager::Differential PhysicsManager::RK4Evaluate(State* initial, float t, float dt, Differential diff)
 {
 	// Create new state
 	State newState;
@@ -85,7 +85,7 @@ PhysicsManager::Differential PhysicsManager::RK4Evaluate(State* initial, double 
 	return output;
 }
 
-Vector3f PhysicsManager::ApplyExternalForces(const State* state, const double t)
+Vector3f PhysicsManager::ApplyExternalForces(const State* state, const float t)
 {
 	Vector3f force = Vector3f(0.0f, state->mass * m_gravity, 0.0f);
 	Vector3f accel = force / state->mass;
@@ -94,7 +94,8 @@ Vector3f PhysicsManager::ApplyExternalForces(const State* state, const double t)
 
 #pragma endregion
 
-void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold *contactManifold)
+#pragma region Iterative Collision Detection
+void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold *contactManifold, float t, float dt)
 {
 	// SPHERE TO SPHERE
 	if (geometry1->objType == SPHERE && geometry2->objType == SPHERE)
@@ -109,13 +110,11 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	}
 }
 
-void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float dt)
+void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float t, float dt)
 {
-#pragma region VAR DELCARATION
 
 	// deltaTime checks
 	float currentDT = dt;
-	float lastDT;
 
 	// Sphere1's variables
 	Vector3f pos1 = sphere1->GetPos();
@@ -128,15 +127,10 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 
 	// Plane variables
 	Plane* plane;
-	Vector3f planeNormal;
-	vector<Vector3f> bounds;
 
 	// Safest position
 	Vector3f safePosition;
 
-#pragma endregion
-
-#pragma region OBJECT DETERMINATION
 	// Object determination
 	if (geometry->objType == SPHERE)
 	{
@@ -150,10 +144,38 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 		//Vector3f planeNormal = plane1->normal;
 	}
 	
-#pragma endregion
+	float distance;
+	float min = t;
+	float max = dt;
+	for (int i = 0; i < maxIterations; i++)
+	{
+		// Get new position based on current DT value
+		testPos = pos1 + (vel1 * currentDT);
 
-#pragma region ITERATIVE COLLISION DETECTION
+		// Sphere-to-sphere radius check
+		if (geometry->objType == SPHERE)
+		{
+			distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
+		}
 
+		// Sphere-to-Plane normal check
+		else if (geometry->objType == PLANE)
+		{
+			Vector3f tempVector3f = plane->GetPos();
+			distance = tempVector3f.dot(plane->normal);
+		}
+
+		// Above plane
+		if (distance > 0)
+		{
+			min = currentDT;
+		}
+		else if (distance > 0)
+		{
+			max = currentDT;
+		}
+	}
+	/*
 	// LOOP - Iterative testing for collisions
 	for (int i = 0; i < maxIterations; i++)
 	{
@@ -196,12 +218,12 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 			currentDT = currentDT + lastDT;
 		}
 	}
-
-#pragma endregion
+	*/
 
 	// TODO - ADD TO CONTACT MANIFOLD + TIME OF IMPACT
 }
 
+#pragma endregion
 void PhysicsManager::SphereToSphereCollisionDetection
 (Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold)
 {

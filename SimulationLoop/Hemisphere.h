@@ -18,11 +18,11 @@ public:
 	float GetRadius(void) const;
 
 	// Simulation Loop Methods
-	virtual void CalculatePhysics(float dt, double t);
-	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold);
+	virtual void CalculatePhysics(float dt, float t) override;
+	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold, float dt, float t) override;
 	virtual void CollisionResponse(ManifoldPoint &point);
 
-	virtual void Update(void);
+	virtual void Update(void) override;
 
 	void Render(void) const;
 

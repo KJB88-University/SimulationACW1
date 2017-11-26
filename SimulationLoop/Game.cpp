@@ -525,7 +525,7 @@ void Game::DynamicCollisionDetection()
 		{
 			if (objVector[j]->GetID() != objVector[i]->GetID())
 			{
-				objVector[i]->CollisionDetection(objVector[j], m_manifold);
+				objVector[i]->CollisionDetection(objVector[j], m_manifold, m_dt, m_previousTime);
 			}
 		}
 	}

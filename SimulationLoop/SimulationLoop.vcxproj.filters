@@ -152,10 +152,10 @@
     <ClInclude Include="ObjectType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlaneRotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Tray.h">
+      <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneRotation.h">
       <Filter>Header Files\Deprecated</Filter>
     </ClInclude>
   </ItemGroup>
