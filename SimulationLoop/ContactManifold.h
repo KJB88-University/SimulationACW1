@@ -7,7 +7,7 @@ class Sphere;
 struct ManifoldPoint 
 {
 	Sphere *contactID1;
-	Sphere *contactID2;
+	Geometry *contactID2;
 	Vector3f contactNormal;
 	float collisionTime;
 

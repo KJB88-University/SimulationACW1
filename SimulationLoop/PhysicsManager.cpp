@@ -110,12 +110,11 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	}
 }
 
-void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float t, float dt)
+bool PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float t, float dt)
 {
 
-	// deltaTime checks
-	float currentDT = dt;
-
+	// OBJECTS REQUIRED
+	bool collided = false;
 	// Sphere1's variables
 	Vector3f pos1 = sphere1->GetPos();
 	Vector3f vel1 = sphere1->GetVel();
@@ -129,7 +128,7 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 	Plane* plane;
 
 	// Safest position
-	Vector3f safePosition;
+	Vector3f safePos;
 
 	// Object determination
 	if (geometry->objType == SPHERE)
@@ -143,10 +142,14 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 		//bounds = plane1->GetBounds();
 		//Vector3f planeNormal = plane1->normal;
 	}
-	
-	float distance;
+
+	// deltaTime checks
 	float min = t;
 	float max = dt;
+	float currentDT = dt;
+
+	// Distance to target from position
+	float distance;
 	for (int i = 0; i < maxIterations; i++)
 	{
 		// Get new position based on current DT value
@@ -161,19 +164,22 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 		// Sphere-to-Plane normal check
 		else if (geometry->objType == PLANE)
 		{
-			Vector3f tempVector3f = plane->GetPos();
-			distance = tempVector3f.dot(plane->normal);
+			distance = plane->normal.dot(testPos - plane->GetPos());
 		}
 
 		// Above plane
 		if (distance > 0)
 		{
 			min = currentDT;
+			safePos = testPos;
 		}
-		else if (distance > 0)
+		else if (distance <= 0)
 		{
 			max = currentDT;
+			collided = true;
 		}
+
+		currentDT = (max - min) / 2;
 	}
 	/*
 	// LOOP - Iterative testing for collisions
@@ -220,7 +226,9 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 	}
 	*/
 
+
 	// TODO - ADD TO CONTACT MANIFOLD + TIME OF IMPACT
+	return collided;
 }
 
 #pragma endregion
@@ -253,6 +261,8 @@ void PhysicsManager::SphereToPlaneCollisionDetection
 void PhysicsManager::SphereToSphereCollisionResponse
 (ManifoldPoint &point)
 {
+
+	/*
 	// TODO - Change to realistic Response
 	Vector3f colNormal = point.contactNormal;
 
@@ -263,6 +273,7 @@ void PhysicsManager::SphereToSphereCollisionResponse
 	point.contactID2->ResetPos();
 	point.contactID2->SetNewVel(
 		-1.0f * colNormal * colNormal.dot(point.contactID2->GetVel()));
+		*/
 }
 
 void PhysicsManager::SphereToPlaneCollisionResponse

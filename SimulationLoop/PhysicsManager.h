@@ -71,7 +71,7 @@ private:
 	// COLLISION DETECTION
 	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
 	void SphereToPlaneCollisionDetection(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold);
-	void IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float t, float dt);
+	bool IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float t, float dt);
 
 	// RUNGE-KUTTA FOURTH ORDER
 	void RK4Integrate(State* state, float t, float dt);
