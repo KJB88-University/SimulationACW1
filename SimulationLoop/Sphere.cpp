@@ -148,7 +148,7 @@ void Sphere::CollisionResponse(ManifoldPoint &point)
 	point.contactID2->SetNewVel(newVel2 + massVel2);
 	*/
 
-	physics->SphereToSphereCollisionResponse(point);
+	physics->CollisionResponse(point);
 }
 
 void Sphere::Update()

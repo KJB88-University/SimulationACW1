@@ -97,6 +97,13 @@ Vector3f PhysicsManager::ApplyExternalForces(const State* state, const float t)
 #pragma region Iterative Collision Detection
 void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold *contactManifold, float t, float dt)
 {
+	// If the first object is a sphere,
+	// (we don't need to check collision from a plane perspective)
+	if (geometry1->objType == SPHERE)
+	{
+		IterativeCollisionDetection(static_cast<Sphere*>(geometry1), geometry2, t, dt, contactManifold);
+	}
+	/*
 	// SPHERE TO SPHERE
 	if (geometry1->objType == SPHERE && geometry2->objType == SPHERE)
 	{
@@ -108,9 +115,10 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	{
 		SphereToPlaneCollisionDetection(static_cast<Sphere*>(geometry1), static_cast<Plane*>(geometry2), contactManifold);
 	}
+	*/
 }
 
-bool PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float t, float dt)
+void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float t, float dt, ContactManifold* contactManifold)
 {
 
 	// OBJECTS REQUIRED
@@ -228,7 +236,22 @@ bool PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 
 
 	// TODO - ADD TO CONTACT MANIFOLD + TIME OF IMPACT
-	return collided;
+	if (collided == true)
+	{
+		ManifoldPoint mp;
+		mp.contactID1 = sphere1;
+		mp.contactID2 = geometry;
+		if (geometry->objType == PLANE)
+		{
+			mp.contactNormal = plane->normal;
+		}
+		else if (geometry->objType == SPHERE)
+		{
+			mp.contactNormal = (sphere1->GetPos() - geometry->GetPos()).normalise();
+		}
+
+		contactManifold->Add(mp);
+	}
 }
 
 #pragma endregion
@@ -258,11 +281,22 @@ void PhysicsManager::SphereToPlaneCollisionDetection
 	// TODO
 }
 
+void PhysicsManager::CollisionResponse(ManifoldPoint &point)
+{
+	if (point.contactID2.objType == SPHERE)
+	{
+		SphereToSphereCollisionResponse(point);
+	}
+	else if (point.contactID2.objType == PLANE)
+	{
+		SphereToPlaneCollisionResponse(point);
+	}
+}
+
 void PhysicsManager::SphereToSphereCollisionResponse
 (ManifoldPoint &point)
 {
-
-	/*
+	Sphere* sphere2 = static_cast<Sphere*>(point.contactID2);
 	// TODO - Change to realistic Response
 	Vector3f colNormal = point.contactNormal;
 
@@ -270,10 +304,9 @@ void PhysicsManager::SphereToSphereCollisionResponse
 	point.contactID1->SetNewVel(
 		-1.0f * colNormal * colNormal.dot(point.contactID1->GetVel()));
 
-	point.contactID2->ResetPos();
-	point.contactID2->SetNewVel(
-		-1.0f * colNormal * colNormal.dot(point.contactID2->GetVel()));
-		*/
+	sphere2->ResetPos();
+	sphere2->SetNewVel(
+		-1.0f * colNormal * colNormal.dot(sphere2->GetVel()));
 }
 
 void PhysicsManager::SphereToPlaneCollisionResponse

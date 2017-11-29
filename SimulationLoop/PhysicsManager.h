@@ -38,8 +38,7 @@ public:
 	void CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold* contactManifold, float t, float dt);
 
 	// RESPONSE
-	void SphereToSphereCollisionResponse(ManifoldPoint &point);
-	void SphereToPlaneCollisionResponse(ManifoldPoint &point);
+	void CollisionResponse(ManifoldPoint &point);
 
 	// POST-COLLISION PHYSICS
 	void CalculatePostPhysics(Sphere* sphere);
@@ -71,7 +70,11 @@ private:
 	// COLLISION DETECTION
 	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
 	void SphereToPlaneCollisionDetection(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold);
-	bool IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float t, float dt);
+	void IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float t, float dt, ContactManifold* contactManifold);
+
+	// COLLISION RESPONSE
+	void SphereToSphereCollisionResponse(ManifoldPoint &point);
+	void SphereToPlaneCollisionResponse(ManifoldPoint &point);
 
 	// RUNGE-KUTTA FOURTH ORDER
 	void RK4Integrate(State* state, float t, float dt);
