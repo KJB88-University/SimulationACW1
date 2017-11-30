@@ -34,6 +34,8 @@ public:
 
 	virtual void Render(void) const = 0;
 
+	Vector3f m_pos;
+
 protected:
 	// Static counter for objID
 	static int countID;
@@ -41,8 +43,6 @@ protected:
 	// Data Members
 	const float k_mass;
 	const int k_objectID;
-
-	Vector3f m_pos;
 	GLuint m_texture;
 
 	// 'Properties'

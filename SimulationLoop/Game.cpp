@@ -145,6 +145,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 
 #pragma endregion
 
+	/*
 #pragma region SPHERES
 
 	objVector.emplace_back
@@ -170,7 +171,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	);
 
 #pragma endregion
-
+*/
 	// Hemisphere
 	objVector.emplace_back
 	(
@@ -217,7 +218,7 @@ void Game::CheckInput()
 		// TODO - ADD BALL
 		objVector.emplace_back(
 			new Sphere(
-				Vector3f(0, 0, 0),
+				Vector3f(0, 11.5f * scaleTweakable, 0),
 				Vector3f(0.5, 0, 0),
 				75.0f,
 				5.0f));

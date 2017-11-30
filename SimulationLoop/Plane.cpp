@@ -2,9 +2,8 @@
 #include "Game.h"
 
 Plane::Plane(Vector3f origin, float width, float depth, float height, Vector3f normal, Vector3f right, Vector3f forward) :
-	Geometry(origin, 1.0f, true, objType), normal(normal), forward(forward), right(right), width(width), depth(depth), height(height)
+	Geometry(origin, 1.0f, true, PLANE), normal(normal), forward(forward), right(right), width(width), depth(depth), height(height)
 {
-
 }
 
 Plane::~Plane(void)

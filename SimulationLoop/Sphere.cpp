@@ -105,11 +105,14 @@ void Sphere::CalculatePhysics(float dt, float t)
 	physics->CalculatePrePhysics(this, t, dt);
 
 	// TODO - Bad plane detection
+	/*
 	if (m_newPos.GetY() < -20.0f + m_radius)
 	{
 		m_newPos.Set(m_newPos.GetX(), -20.0f + m_radius, 0.0f);
 		m_newVelocity.Set(m_newVelocity.GetX(), 0.0f, 0.0f);
+		
 	}
+	*/
 	
 }
 

@@ -16,9 +16,6 @@ public:
 	Plane(Vector3f origin, float width, float depth, float height, Vector3f normal, Vector3f right, Vector3f forward);
 	~Plane(void);
 
-	// Obj Type
-	const ObjectType objType = PLANE;
-
 	// Local co-ords
 	Vector3f normal;
 	Vector3f right;
