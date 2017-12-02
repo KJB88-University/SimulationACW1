@@ -27,6 +27,11 @@ public:
 
 	bool trayMove = false;
 
+	// Plane dimensions
+	float height;
+	float width;
+	float depth;
+
 	// Simulation Loop Methods
 	virtual void CalculatePhysics(float dt, float t) override;
 	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold, float t, float dt) override;
@@ -36,11 +41,6 @@ public:
 	virtual void Render() const;
 
 private:
-
-	// Plane dimensions
-	float height;
-	float width;
-	float depth;
 
 	// Copy of DT for movable Trays
 	float m_dt;

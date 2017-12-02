@@ -68,11 +68,11 @@ private:
 	const float m_gravity = -9.81f;
 
 	// COLLISION DETECTION
-	void SphereToSphereCollisionDetection(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold);
-	void SphereToPlaneCollisionDetection(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold);
-	void IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry1, float t, float dt, ContactManifold* contactManifold);
+	bool IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt);
+	//bool IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt);
+	bool IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt);
 
-	// COLLISION RESPONSE
+		// COLLISION RESPONSE
 	void SphereToSphereCollisionResponse(ManifoldPoint &point);
 	void SphereToPlaneCollisionResponse(ManifoldPoint &point);
 
@@ -80,8 +80,5 @@ private:
 	void RK4Integrate(State* state, float t, float dt);
 	Differential RK4Evaluate(State* initial, float t, float dt, Differential diff);
 	Vector3f ApplyExternalForces(const State* state, const float t);
-
-
-
 
 };

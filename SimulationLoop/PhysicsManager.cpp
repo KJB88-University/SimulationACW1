@@ -97,27 +97,54 @@ Vector3f PhysicsManager::ApplyExternalForces(const State* state, const float t)
 #pragma region Iterative Collision Detection
 void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold *contactManifold, float t, float dt)
 {
+	float distance;
+
 	// If the first object is a sphere,
 	// (we don't need to check collision from a plane perspective)
-	if (geometry1->objType == SPHERE)
+	// Additionally avoid checking against the same sphere
+	if (geometry1->objType == SPHERE && geometry1->GetID() != geometry2->GetID())
 	{
-		IterativeCollisionDetection(static_cast<Sphere*>(geometry1), geometry2, t, dt, contactManifold);
-	}
-	/*
-	// SPHERE TO SPHERE
-	if (geometry1->objType == SPHERE && geometry2->objType == SPHERE)
-	{
-		SphereToSphereCollisionDetection(static_cast<Sphere*>(geometry1), static_cast<Sphere*>(geometry2), contactManifold);
+		Sphere* sphere1 = static_cast<Sphere*>(geometry1);
+
+		if (geometry2->objType == PLANE)
+		{
+			Plane* plane = static_cast<Plane*>(geometry2);
+			distance = plane->normal.dot(geometry1->GetPos() - geometry2->GetPos());
+
+			if (distance <= 0.0f)
+			{
+				if (IterativeCollisionDetectionS2P(sphere1, plane, t, dt))
+				{
+					ManifoldPoint mp;
+					mp.contactID1 = sphere1;
+					mp.contactID2 = plane;
+					mp.contactNormal = plane->normal;
+					contactManifold->Add(mp);
+				}
+			}
+		}
+		else if (geometry2->objType == SPHERE)
+		{
+			Sphere* sphere2 = static_cast<Sphere*>(geometry2);
+			distance = sphere1->GetPos().distance(sphere2->GetPos()) - (sphere1->GetRadius() + sphere2->GetRadius());
+
+			if (distance <= 0.0f)
+			{
+				if (IterativeCollisionDetectionS2S(sphere1, sphere2, t, dt))
+				{
+					ManifoldPoint mp;
+					mp.contactID1 = sphere1;
+					mp.contactID2 = sphere2;
+					mp.contactNormal = (sphere1->GetPos() - sphere2->GetPos()).normalise();
+					contactManifold->Add(mp);
+				}
+			}
+		}
 	}
 
-	// SPHERE TO PLANE
-	else if (geometry1->objType == SPHERE && geometry2->objType == PLANE)
-	{
-		SphereToPlaneCollisionDetection(static_cast<Sphere*>(geometry1), static_cast<Plane*>(geometry2), contactManifold);
-	}
-	*/
 }
 
+/*
 void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geometry, float t, float dt, ContactManifold* contactManifold)
 {
 
@@ -193,7 +220,7 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 	if (collided == true)
 	{
 		ManifoldPoint mp;
-		sphere1->m_pos = safePos;
+		sphere1->SetNewPos(testPos);
 		mp.contactID1 = sphere1;
 		mp.contactID2 = geometry;
 		if (geometry->objType == PLANE)
@@ -208,13 +235,146 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 		contactManifold->Add(mp);
 	}
 }
+*/
+bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt)
+{
+	// Object attributes
+	Vector3f pos1 = sphere1->GetPos();
+	Vector3f vel1 = sphere1->GetVel();
+	float r1 = sphere1->GetRadius();
 
+	Vector3f pos2 = sphere2->GetPos();
+	float r2 = sphere2->GetRadius();
+
+	// Binary chop values
+	int maxIterations = 5;
+	float min = t;
+	float max = dt;
+	float currentDT = (max - min) / 2;
+
+	// Output values
+	Vector3f testPos;
+	Vector3f safePos;
+	bool collided = false;
+
+	// Distance to target from position
+	float distance = 0;
+	for (int i = 0; i < maxIterations; ++i)
+	{
+		// Get new position based on current DT value
+		testPos = pos1 + (vel1 * currentDT);
+
+		// S2S distance test
+		distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
+
+		// Above plane
+		if (distance > 0)
+		{
+			min = currentDT;
+			safePos = testPos;
+		}
+		else if (distance <= 0)
+		{
+			max = currentDT;
+			collided = true;
+		}
+
+		currentDT = (max - min) / 2;
+	}
+
+	if (collided == true)
+	{
+		sphere1->SetNewPos(safePos);
+	}
+
+	return collided;
+}
+
+bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt)
+{
+	// Object attributes
+	Vector3f pos1 = sphere1->GetPos();
+	Vector3f vel1 = sphere1->GetVel();
+
+	Vector3f pOrigin = plane1->GetPos();
+	Vector3f pNormal = plane1->normal;
+	Vector3f pForward = plane1->forward;
+	Vector3f pRight = plane1->right;
+
+	// Binary chop values
+	int maxIterations = 5;
+	float min = t;
+	float max = dt;
+	float currentDT = (max - min) / 2;
+
+	// Output values
+	Vector3f safePos;
+	bool collided = false;
+	Vector3f testPos;
+
+	// Distance to target from position
+	float distance = 0;
+	for (int i = 0; i < maxIterations; ++i)
+	{
+		// Get new position based on current DT value
+		testPos = pos1 + (vel1 * currentDT);
+
+		// TODO - Plane bounds check!
+		
+		// Sphere-to-Plane distance test
+		distance = plane1->normal.dot((testPos - pOrigin));
+
+		// Above plane
+		if (distance > 0)
+		{
+			min = currentDT;
+			safePos = testPos;
+		}
+		else if (distance <= 0)
+		{
+			max = currentDT;
+			collided = true;
+		}
+
+		currentDT = (max - min) / 2;
+	}
+
+	if (collided == true)
+	{
+		sphere1->SetNewPos(safePos);
+	}
+
+	return collided;
+}
+/*
+bool PhysicsManager::IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt)
+{
+	// Object attributes
+	Vector3f pos1 = sphere1->GetPos();
+	Vector3f vel1 = sphere1->GetVel();
+	float r1 = sphere1->GetRadius();
+	Vector3f pos2 = hemisphere1->GetPos();
+	float r2 = hemisphere1->GetRadius();
+
+	// Binary chop values
+	int maxIterations = 5;
+	float min = t;
+	float max = dt;
+	float currentDT = (max - min) / 2;
+
+	// Output values
+	Vector3f safePos;
+	bool collided = false;
+
+	return false;
+}
+*/
 #pragma endregion
+/*
 void PhysicsManager::SphereToSphereCollisionDetection
 (Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold)
 {
 	// TODO - change to reliable Detection
-	/*
 	Vector3f pos1 = sphere1->GetNewPos();
 	Vector3f pos2 = sphere2->GetNewPos();
 	float dist = pos1.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
@@ -226,15 +386,9 @@ void PhysicsManager::SphereToSphereCollisionDetection
 		mp.contactNormal = (pos2 - pos1).normalise();
 		contactManifold->Add(mp);
 	}
-	*/
-	
-}
 
-void PhysicsManager::SphereToPlaneCollisionDetection
-(Sphere* sphere, Geometry* plane, ContactManifold *contactManifold)
-{
-	// TODO
 }
+*/
 
 void PhysicsManager::CollisionResponse(ManifoldPoint &point)
 {

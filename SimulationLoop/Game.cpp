@@ -16,22 +16,16 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	inputManager = InputManager::GetInstance();
 	physicsManager = PhysicsManager::GetInstance();
 
-#pragma region TRAYS
+//#pragma region TRAYS
 
 	// Bottom Tray
 	tray1 = new Plane
 	(
-		/*
-		Vector3f(-5.0f * scaleTweakable, -4.5f * scaleTweakable, 5.0f * scaleTweakable),
-		Vector3f(5.0f * scaleTweakable, -4.5f * scaleTweakable, 5.0f * scaleTweakable),
-		Vector3f(5.0f * scaleTweakable, -4.5f * scaleTweakable, -5.0f * scaleTweakable),
-		Vector3f(-5.0f * scaleTweakable, -4.5f * scaleTweakable, -5.0f * scaleTweakable),
-		*/
 		Vector3f(0.0f, -4.5f * scaleTweakable, 0.0f),
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
 		0.0f,
-		Vector3f(0.0f, -1.0f, 0.0f),
+		Vector3f(0.0f, 1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
 	);
@@ -41,7 +35,6 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		tray1
 	);
 
-
 	// Mid Tray
 	tray2 = new Plane
 	(
@@ -49,7 +42,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
 		0.0f,
-		Vector3f(0.0f, -1.0f, 0.0f),
+		Vector3f(0.0f, 1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
 	);
@@ -66,7 +59,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
 		0.0f,
-		Vector3f(0.0f, -1.0f, 0.0f),
+		Vector3f(0.0f, 1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
 	);
@@ -79,7 +72,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 #pragma endregion
 
 #pragma region PLANES
-
+	/*
 	// 'Front' face
 	objVector.emplace_back
 	(
@@ -140,50 +133,24 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0.0f, 0.0f, -1.0f)
 		)
 	);
-
+	*/
 
 
 #pragma endregion
-
-	/*
-#pragma region SPHERES
-
-	objVector.emplace_back
-	(
-		new Sphere
-		(
-			Vector3f(0, 0, 0),
-			Vector3f(0.5, 0, 0),
-			0.02f,
-			0.5f * scaleTweakable
-		)
-	);
-
-	objVector.emplace_back
-	(
-		new Sphere
-		(
-			Vector3f(0, -15, 0),
-			Vector3f(-1.0, 20, 0),
-			0.02f,
-			0.5f * scaleTweakable
-		)
-	);
-
-#pragma endregion
-*/
+	
 	// Hemisphere
 	objVector.emplace_back
 	(
 		new Hemisphere(Vector3f(0.0f, 7.5f * scaleTweakable, 0.0f), 1.0f, 20.0f * scaleTweakable)
 	);
-
+	
 	// Manifold
 	m_manifold = new ContactManifold();
 
 	// Perf metrics
 	QueryPerformanceFrequency(&frequency);
 	QueryPerformanceCounter(&start);
+	
 }
 
 // Deconstructor
