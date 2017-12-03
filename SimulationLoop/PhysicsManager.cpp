@@ -1,6 +1,6 @@
 #include "PhysicsManager.h"
 #include "Game.h"
-
+#include "Box.h"
 // Provide default value to instance
 // to avoid undefined behaviour
 PhysicsManager* PhysicsManager::instance = 0;
@@ -87,7 +87,7 @@ PhysicsManager::Differential PhysicsManager::RK4Evaluate(State* initial, float t
 
 Vector3f PhysicsManager::ApplyExternalForces(const State* state, const float t)
 {
-	Vector3f force = Vector3f(0.0f, state->mass * m_gravity, 0.0f);
+	Vector3f force = Vector3f(0.0f, state->mass * (m_gravity * Game::scaleTweakable), 0.0f);
 	Vector3f accel = force / state->mass;
 	return accel;
 }
@@ -97,7 +97,7 @@ Vector3f PhysicsManager::ApplyExternalForces(const State* state, const float t)
 #pragma region Iterative Collision Detection
 void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2, ContactManifold *contactManifold, float t, float dt)
 {
-	float distance;
+	float distance = 0.0f;
 
 	// If the first object is a sphere,
 	// (we don't need to check collision from a plane perspective)
@@ -106,11 +106,12 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	{
 		Sphere* sphere1 = static_cast<Sphere*>(geometry1);
 
+		// If the geometry is a PLANE
+		// Do plane collision detection
 		if (geometry2->objType == PLANE)
 		{
 			Plane* plane = static_cast<Plane*>(geometry2);
-			distance = plane->normal.dot(geometry1->GetPos() - geometry2->GetPos());
-
+			distance = plane->normal.dot(sphere1->GetPos() - plane->GetPos()) - sphere1->GetRadius();
 			if (distance <= 0.0f)
 			{
 				if (IterativeCollisionDetectionS2P(sphere1, plane, t, dt))
@@ -295,11 +296,20 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	// Object attributes
 	Vector3f pos1 = sphere1->GetPos();
 	Vector3f vel1 = sphere1->GetVel();
+	float radius1 = sphere1->GetRadius();
 
+	/*
+	if (!WithinBoundsCheck(sphere1->GetNewPos(), radius1, plane1))
+	{
+		return false;
+	}
+	*/
 	Vector3f pOrigin = plane1->GetPos();
 	Vector3f pNormal = plane1->normal;
 	Vector3f pForward = plane1->forward;
 	Vector3f pRight = plane1->right;
+	float length = plane1->length;
+	float width = plane1->width;
 
 	// Binary chop values
 	int maxIterations = 5;
@@ -319,10 +329,8 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 		// Get new position based on current DT value
 		testPos = pos1 + (vel1 * currentDT);
 
-		// TODO - Plane bounds check!
-		
-		// Sphere-to-Plane distance test
-		distance = plane1->normal.dot((testPos - pOrigin));
+		// Sphere-to-Plane distance test 
+		distance = pNormal.dot((testPos - pOrigin)) - radius1;
 
 		// Above plane
 		if (distance > 0)
@@ -346,6 +354,34 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 
 	return collided;
 }
+
+bool PhysicsManager::WithinBoundsCheck(Vector3f spherePos, float sphereRad, Plane* plane)
+{
+
+	float distance;
+
+	for (int i = 3; i < 5; ++i)
+	{
+		// Check the 'distance' from each wall,
+		// is the sphere position inside the box?
+		distance = planeList[i]->normal.dot((spherePos - planeList[i]->m_pos)) - sphereRad;
+
+		// If the distance is less than 0,
+		// the sphere is outside the box on the X or Z
+		if (distance < 0)
+		{
+			return false;
+		}
+	}
+
+	// If we reach this point,
+	// we have checked all walls
+	// Sphere must be inside the walls
+	return true;
+
+
+}
+
 /*
 bool PhysicsManager::IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt)
 {

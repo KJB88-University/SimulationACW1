@@ -32,7 +32,7 @@ public:
 	virtual void CollisionResponse(ManifoldPoint &point) = 0;
 	virtual void Update(void) = 0;
 
-	virtual void Render(void) const = 0;
+	virtual void Render(void) = 0;
 
 	Vector3f m_pos;
 

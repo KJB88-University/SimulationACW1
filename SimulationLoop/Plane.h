@@ -5,6 +5,7 @@
 #include <vector>
 #include "ObjectType.h"
 #include "PlaneRotation.h"
+#include "Box.h"
 
 using namespace std;
 
@@ -13,13 +14,19 @@ class Plane : public Geometry
 
 public:
 
-	Plane(Vector3f origin, float width, float depth, float height, Vector3f normal, Vector3f right, Vector3f forward);
+	Plane(Vector3f origin, float width, float length, Vector3f normal, Vector3f right, Vector3f forward);
 	~Plane(void);
 
 	// Local co-ords
 	Vector3f normal;
 	Vector3f right;
 	Vector3f forward;
+
+	// Vertex Positions
+	Vector3f topLeft;
+	Vector3f topRight;
+	Vector3f botRight;
+	Vector3f botLeft;
 
 	void SetupTray(void);
 	void Plane::MoveTrayIn(void);
@@ -28,7 +35,7 @@ public:
 	bool trayMove = false;
 
 	// Plane dimensions
-	float height;
+	float length;
 	float width;
 	float depth;
 
@@ -38,7 +45,7 @@ public:
 	virtual void CollisionResponse(ManifoldPoint &point) override;
 	virtual void Update() override;
 
-	virtual void Render() const;
+	virtual void Render();
 
 private:
 

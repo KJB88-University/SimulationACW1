@@ -5,6 +5,8 @@
 #include "Hemisphere.h"
 #include "PlaneRotation.h"
 
+class Plane;
+
 const float Game::scaleTweakable = 10;
 float Game::m_dt = 0;
 
@@ -17,23 +19,20 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	physicsManager = PhysicsManager::GetInstance();
 
 //#pragma region TRAYS
-
 	// Bottom Tray
 	tray1 = new Plane
 	(
 		Vector3f(0.0f, -4.5f * scaleTweakable, 0.0f),
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
-		0.0f,
 		Vector3f(0.0f, 1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
 	);
 	tray1->SetupTray();
-	objVector.emplace_back
-	(
-		tray1
-	);
+	objVector.emplace_back(tray1);
+	// Add to Box container
+	physicsManager->planeList.emplace_back(tray1);
 
 	// Mid Tray
 	tray2 = new Plane
@@ -41,16 +40,14 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		Vector3f(0.0f, 0.0f, 0.0f),
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
-		0.0f,
 		Vector3f(0.0f, 1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
 	);
 	tray2->SetupTray();
-	objVector.emplace_back
-	(
-		tray2
-	);
+	objVector.emplace_back(tray2);
+	// Add to Box container
+	physicsManager->planeList.emplace_back(tray2);
 
 	// Top Tray
 	tray3 = new Plane
@@ -58,84 +55,72 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		Vector3f(0.0f, 4.5f * scaleTweakable, 0.0f),
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
-		0.0f,
 		Vector3f(0.0f, 1.0f, 0.0f),
 		Vector3f(0.0f, 0.0f, 1.0f),
 		Vector3f(1.0f, 0.0f, 0.0f)
 	);
 	tray3->SetupTray();
-	objVector.emplace_back
-	(
-		tray3
-	);
-
+	objVector.emplace_back(tray3);
+	// Add to Box container
+	physicsManager->planeList.emplace_back(tray3);
 #pragma endregion
 
 #pragma region PLANES
-	/*
+	
+	
 	// 'Front' face
-	objVector.emplace_back
-	(
-		new Plane
+	Plane* plane = new Plane
 		(
 			Vector3f(0.0f, 0.0f, 5.0f * scaleTweakable),
-			5.0f * scaleTweakable,
-			0.0f * scaleTweakable,
 			7.5f * scaleTweakable,
+			5.0f * scaleTweakable,
 			Vector3f(0.0f, 0.0f, -1.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
 			Vector3f(-1.0f, 0.0, 0.0f)
-		)
-	);
+		);
+	objVector.emplace_back(plane);
+	physicsManager->planeList.emplace_back(plane);
 
 	// 'Back' face
-	objVector.emplace_back
-	(
-		new Plane
+	plane = new Plane
 		(
 			Vector3f(0.0f, 0.0f, -5.0f * scaleTweakable),
-			5.0f * scaleTweakable,
-			0.0f * scaleTweakable,
 			7.5f * scaleTweakable,
+			5.0f * scaleTweakable,
 			Vector3f(0.0f, 0.0f, 1.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
 			Vector3f(1.0f, 0.0f, 0.0f)
-		)
-	);
-
+		);
+	objVector.emplace_back(plane);
+	physicsManager->planeList.emplace_back(plane);
 
 	// 'Left' face
-	objVector.emplace_back
+	plane = new Plane		
 	(
-		new Plane
-		(
 			Vector3f(-5.0f * scaleTweakable, 0.0f, 0.0f),
-			0.0f * scaleTweakable,
-			5.0f * scaleTweakable,
 			7.5f * scaleTweakable,
+			5.0f * scaleTweakable,
 			Vector3f(1.0f, 0.0f, 0.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
 			Vector3f(0.0f, 0.0f, 1.0f)
-		)
-	);
+		);
+	objVector.emplace_back(plane);
+	physicsManager->planeList.emplace_back(plane);
 
 	// 'Right' face
-	objVector.emplace_back
-	(
-		new Plane
+	plane = new Plane
 		(
 			Vector3f(5.0f * scaleTweakable, 0.0f, 0.0f),
-			0.0f * scaleTweakable,
-			5.0f * scaleTweakable,
 			7.5f * scaleTweakable,
+			5.0f * scaleTweakable,
 			Vector3f(-1.0f, 0.0f, 0.0f),
 			Vector3f(0.0f, 1.0f, 0.0f),
 			Vector3f(0.0f, 0.0f, -1.0f)
-		)
-	);
-	*/
-
-
+		);
+	objVector.emplace_back(plane);
+	physicsManager->planeList.emplace_back(plane);
+	
+	
 #pragma endregion
 	
 	// Hemisphere
@@ -185,8 +170,8 @@ void Game::CheckInput()
 		// TODO - ADD BALL
 		objVector.emplace_back(
 			new Sphere(
-				Vector3f(0, 11.5f * scaleTweakable, 0),
-				Vector3f(0.5, 0, 0),
+				Vector3f(0.0f, 11.5f * scaleTweakable, 0.0f),
+				Vector3f(1.25f * scaleTweakable, 0, 0.5f * scaleTweakable),
 				75.0f,
 				5.0f));
 	}

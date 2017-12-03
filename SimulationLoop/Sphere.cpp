@@ -156,11 +156,11 @@ void Sphere::CollisionResponse(ManifoldPoint &point)
 
 void Sphere::Update()
 {
-	m_velocity = m_newVelocity;
-	m_pos = m_newPos;
-
 	m_oldPosition = m_pos;
 	m_oldVelocity = m_velocity;
+
+	m_velocity = m_newVelocity;
+	m_pos = m_newPos;
 }
 #pragma endregion
 
@@ -169,11 +169,11 @@ void Sphere::ResetPos()
 	m_newPos = m_pos;
 }
 
-void Sphere::Render() const									
+void Sphere::Render()									
 {
 	
 	glPushMatrix();
-		glTranslatef(m_pos.GetX(), m_pos.GetY(), 0);
+		glTranslatef(m_pos.GetX(), m_pos.GetY(), m_pos.GetZ());
 		glColor3d(1, 0, 0);
 		glBindTexture(GL_TEXTURE_2D, m_texture);               // Select Our Texture
 		gluQuadricDrawStyle(quadric, GLU_FILL);

@@ -24,7 +24,7 @@ public:
 
 	virtual void Update(void) override;
 
-	void Render(void) const;
+	void Render(void);
 
 private:
 

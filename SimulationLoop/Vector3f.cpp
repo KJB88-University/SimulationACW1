@@ -76,7 +76,7 @@ Vector3f Vector3f::divide(float n) const
 
 float Vector3f::dot(const Vector3f &vec) const
 {
-	return m_x*vec.GetX() + m_y*vec.GetY();
+	return m_x*vec.GetX() + m_y*vec.GetY() + m_z*vec.GetZ();
 }
 
 float Vector3f::length() const

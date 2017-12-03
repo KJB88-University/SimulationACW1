@@ -1,9 +1,14 @@
 #include "Plane.h"
 #include "Game.h"
 
-Plane::Plane(Vector3f origin, float width, float depth, float height, Vector3f normal, Vector3f right, Vector3f forward) :
-	Geometry(origin, 1.0f, true, PLANE), normal(normal), forward(forward), right(right), width(width), depth(depth), height(height)
+Plane::Plane(Vector3f origin, float width, float length, Vector3f normal, Vector3f right, Vector3f forward) :
+	Geometry(origin, 1.0f, true, PLANE), normal(normal), forward(forward), right(right), width(width), length(length)
 {
+	// Set up initial vertices
+	topLeft = origin - (right * width) - (forward * length);
+	topRight = origin + (right * width) - (forward * length);
+	botRight = origin + (right * width) + (forward * length);
+	botLeft = origin - (right * width) + (forward * length);
 }
 
 Plane::~Plane(void)
@@ -111,14 +116,7 @@ void Plane::CollisionResponse(ManifoldPoint &point)
 
 }
 
-/*
-vector<Vector3f> Plane::GetBounds(void) const
-{
-	return m_Bounds;
-}
-*/
-
-void Plane::Render(void) const
+void Plane::Render(void)
 {
 	// Draw plane (at y=-20)
 	glDisable(GL_TEXTURE_2D);
@@ -127,34 +125,23 @@ void Plane::Render(void) const
 	glBegin(GL_QUADS);
 	glColor3d(1, 1, 1);
 
-	if (!hasTray)
-	{
-		// Top Left
-		glVertex3d(m_pos.GetX() + -width, m_pos.GetY() + height, m_pos.GetZ() + depth);
+	// Update vertices with velocity changes
+	topLeft = m_pos - (right * width) - (forward * length);
+	topRight = m_pos + (right * width) - (forward * length);
+	botRight = m_pos + (right * width) + (forward * length);
+	botLeft = m_pos - (right * width) + (forward * length);
 
-		// Top Right
-		glVertex3d(m_pos.GetX() + width, m_pos.GetY() + height, m_pos.GetZ() + -depth);
+	// Top Left
+	glVertex3d(topLeft.GetX(), topLeft.GetY(), topLeft.GetZ());
 
-		// Bottom Right
-		glVertex3d(m_pos.GetX() + width, m_pos.GetY() + -height, m_pos.GetZ() + -depth);
+	// Top Right
+	glVertex3d(topRight.GetX(), topRight.GetY(), topRight.GetZ());
 
-		// Bottom Left
-		glVertex3d(m_pos.GetX() + -width, m_pos.GetY() + -height, m_pos.GetZ() + depth);
-	}
-	else
-	{
-		// Top Left
-		glVertex3d(m_pos.GetX() + -width, m_pos.GetY() + height, m_pos.GetZ() + -depth);
+	// Bottom Right
+	glVertex3d(botRight.GetX(), botRight.GetY(), botRight.GetZ());
 
-		// Top Right
-		glVertex3d(m_pos.GetX() + width, m_pos.GetY() + height, m_pos.GetZ() + -depth);
-
-		// Bottom Right
-		glVertex3d(m_pos.GetX() + width, m_pos.GetY() + -height, m_pos.GetZ() + depth);
-
-		// Bottom Left
-		glVertex3d(m_pos.GetX() + -width, m_pos.GetY() + -height, m_pos.GetZ() + depth);
-	}
+	// Bottom Left
+	glVertex3d(botLeft.GetX(), botLeft.GetY(), botLeft.GetZ());
 
 	glEnd();
 

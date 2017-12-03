@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "Sphere.h"
 #include "Game.h"
+#include "Plane.h"
 
 class PhysicsManager
 {
@@ -50,6 +51,9 @@ public:
 	float GetCoR(void) const;
 	void SetCoR(float newCoR);
 
+	// 0-2 Trays (Bot, Mid, Top)
+	// 3-6 Walls (Front, Back, Left, Right);
+	vector<Plane*> planeList;
 private:
 
 	// Private constructor to avoid instances being created
@@ -71,6 +75,8 @@ private:
 	bool IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt);
 	//bool IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt);
 	bool IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt);
+	bool WithinBoundsCheck(Vector3f spherePos, float sphereRad, Plane* plane);
+	float CalculateLineEquation(Vector3f v1, Vector3f v2, Vector3f point);
 
 		// COLLISION RESPONSE
 	void SphereToSphereCollisionResponse(ManifoldPoint &point);

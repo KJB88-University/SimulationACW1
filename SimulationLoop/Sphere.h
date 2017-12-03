@@ -38,7 +38,7 @@ public:
 
 	void ResetPos();
 
-	void Render() const;
+	void Render();
 
 private:
 	

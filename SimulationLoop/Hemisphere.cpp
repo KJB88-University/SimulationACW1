@@ -55,36 +55,8 @@ void Hemisphere::Update(void)
 
 }
 
-void Hemisphere::Render() const
+void Hemisphere::Render()
 {
-
-	/*
-	const float PI = 3.141592f;
-	GLfloat x, y, z, alpha, beta; // Storage for coordinates and angles     
-	x = m_pos.GetX();
-	y = m_pos.GetY();
-	z = m_pos.GetZ();
-
-	//GLfloat radius = 60.0f;
-	int gradation = 60.0f;
-
-	for (alpha = 0.0; alpha < PI; alpha += PI / gradation)
-	{
-		glBegin(GL_TRIANGLE_STRIP);
-		for (beta = 0.0; beta < 2.01 * PI; beta += PI / gradation)
-		{
-			x = m_radius*cos(beta)*sin(alpha);
-			y = m_radius*sin(beta)*sin(alpha);
-			z = m_radius*cos(alpha);
-			glVertex3f(x, y, z);
-			x = m_radius*cos(beta)*sin(alpha + PI / gradation);
-			y = m_radius*sin(beta)*sin(alpha + PI / gradation);
-			z = m_radius*cos(alpha + PI / gradation);
-			glVertex3f(x, y, z);
-		}
-		glEnd();
-	}
-	*/
 
 	// BOWL
 	glPushMatrix();
