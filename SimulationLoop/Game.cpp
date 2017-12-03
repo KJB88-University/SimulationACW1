@@ -171,7 +171,7 @@ void Game::CheckInput()
 		objVector.emplace_back(
 			new Sphere(
 				Vector3f(0.0f, 11.5f * scaleTweakable, 0.0f),
-				Vector3f(1.25f * scaleTweakable, 0, 0.5f * scaleTweakable),
+				Vector3f(1.25f * scaleTweakable, 0, -0.5f * scaleTweakable),
 				75.0f,
 				5.0f));
 	}

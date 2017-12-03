@@ -40,6 +40,8 @@ public:
 
 	void Render();
 
+	Vector3f collisionNormal;
+
 private:
 	
 	// Sphere-specific data members
@@ -47,8 +49,6 @@ private:
 	Vector3f m_newPos;
 	Vector3f m_velocity;
 	Vector3f m_newVelocity;
-	Vector3f m_oldVelocity;
-	Vector3f m_oldPosition;
 
 	Vector3f m_force;
 	Vector3f m_acceleration;

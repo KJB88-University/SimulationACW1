@@ -156,8 +156,6 @@ void Sphere::CollisionResponse(ManifoldPoint &point)
 
 void Sphere::Update()
 {
-	m_oldPosition = m_pos;
-	m_oldVelocity = m_velocity;
 
 	m_velocity = m_newVelocity;
 	m_pos = m_newPos;

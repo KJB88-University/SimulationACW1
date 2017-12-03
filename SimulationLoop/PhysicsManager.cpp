@@ -293,7 +293,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 
 bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt)
 {
-	// Object attributes
+	// Sphere attributes
 	Vector3f pos1 = sphere1->GetPos();
 	Vector3f vel1 = sphere1->GetVel();
 	float radius1 = sphere1->GetRadius();
@@ -304,6 +304,8 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 		return false;
 	}
 	*/
+
+	// Plane attributes
 	Vector3f pOrigin = plane1->GetPos();
 	Vector3f pNormal = plane1->normal;
 	Vector3f pForward = plane1->forward;
@@ -358,28 +360,60 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 bool PhysicsManager::WithinBoundsCheck(Vector3f spherePos, float sphereRad, Plane* plane)
 {
 
-	float distance;
+	//float distance = -1;
 
-	for (int i = 3; i < 5; ++i)
+	/*
+	// Up
+	if ((spherePos.GetY() + sphereRad) < -7.5f * Game::scaleTweakable)
+	{
+		return false;
+	}
+
+	if ((spherePos.GetY() - sphereRad) > 7.5f * Game::scaleTweakable)
+	{
+		return false;
+	}
+	// Front
+	if ((spherePos.GetZ() + sphereRad) > planeList[3]->length)
+	{
+		return false;
+	}
+
+	// Back
+	if ((spherePos.GetZ() - sphereRad) < -(planeList[4]->length))
+	{
+		return false;
+	}
+
+	// Left
+	if ((spherePos.GetX() - sphereRad) < -(planeList[5]->width))
+	{
+		return false;
+	}
+
+	// Right
+	if ((spherePos.GetX() + sphereRad) > planeList[6]->width)
+	{
+		return false;
+	}
+	
+
+	for (int i = 3; i < 6; i++)
 	{
 		// Check the 'distance' from each wall,
 		// is the sphere position inside the box?
 		distance = planeList[i]->normal.dot((spherePos - planeList[i]->m_pos)) - sphereRad;
 
-		// If the distance is less than 0,
-		// the sphere is outside the box on the X or Z
-		if (distance < 0)
+		// If the distance is greater than 0,
+		// Sphere must be inside the walls
+		if (distance > 0)
 		{
-			return false;
+			return true;
 		}
 	}
-
-	// If we reach this point,
-	// we have checked all walls
-	// Sphere must be inside the walls
-	return true;
-
-
+	*/
+	// the sphere is outside the box on the X or Z
+	return false;
 }
 
 /*
