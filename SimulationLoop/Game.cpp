@@ -19,6 +19,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	physicsManager = PhysicsManager::GetInstance();
 
 //#pragma region TRAYS
+	
 	// Bottom Tray
 	tray1 = new Plane
 	(
@@ -26,8 +27,8 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
 		Vector3f(0.0f, 1.0f, 0.0f),
-		Vector3f(0.0f, 0.0f, 1.0f),
-		Vector3f(1.0f, 0.0f, 0.0f)
+		Vector3f(1.0f, 0.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, 1.0f)
 	);
 	tray1->SetupTray();
 	objVector.emplace_back(tray1);
@@ -41,14 +42,14 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
 		Vector3f(0.0f, 1.0f, 0.0f),
-		Vector3f(0.0f, 0.0f, 1.0f),
-		Vector3f(1.0f, 0.0f, 0.0f)
+		Vector3f(1.0f, 0.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, 1.0f)
 	);
 	tray2->SetupTray();
 	objVector.emplace_back(tray2);
 	// Add to Box container
 	physicsManager->planeList.emplace_back(tray2);
-
+	
 	// Top Tray
 	tray3 = new Plane
 	(
@@ -56,8 +57,8 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		5.0f * scaleTweakable,
 		5.0f * scaleTweakable,
 		Vector3f(0.0f, 1.0f, 0.0f),
-		Vector3f(0.0f, 0.0f, 1.0f),
-		Vector3f(1.0f, 0.0f, 0.0f)
+		Vector3f(1.0f, 0.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, 1.0f)
 	);
 	tray3->SetupTray();
 	objVector.emplace_back(tray3);

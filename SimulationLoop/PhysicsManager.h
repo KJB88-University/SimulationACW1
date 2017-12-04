@@ -71,12 +71,14 @@ private:
 	// Acceleration due to Gravity
 	const float m_gravity = -9.81f;
 
+	Vector3f CrossProduct(Vector3f vec1, Vector3f vec2);
+	Vector3f PlaneProjection(Sphere* sphere1, Plane* plane);
+
 	// COLLISION DETECTION
 	bool IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt);
 	//bool IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt);
 	bool IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt);
-	bool WithinBoundsCheck(Vector3f spherePos, float sphereRad, Plane* plane);
-	float CalculateLineEquation(Vector3f v1, Vector3f v2, Vector3f point);
+
 
 		// COLLISION RESPONSE
 	void SphereToSphereCollisionResponse(ManifoldPoint &point);

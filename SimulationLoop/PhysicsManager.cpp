@@ -1,6 +1,9 @@
 #include "PhysicsManager.h"
 #include "Game.h"
 #include "Box.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 // Provide default value to instance
 // to avoid undefined behaviour
 PhysicsManager* PhysicsManager::instance = 0;
@@ -296,14 +299,8 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	// Sphere attributes
 	Vector3f pos1 = sphere1->GetPos();
 	Vector3f vel1 = sphere1->GetVel();
+	Vector3f fPos1 = sphere1->GetNewPos();
 	float radius1 = sphere1->GetRadius();
-
-	/*
-	if (!WithinBoundsCheck(sphere1->GetNewPos(), radius1, plane1))
-	{
-		return false;
-	}
-	*/
 
 	// Plane attributes
 	Vector3f pOrigin = plane1->GetPos();
@@ -313,6 +310,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	float length = plane1->length;
 	float width = plane1->width;
 
+	Vector3f projection = PlaneProjection(sphere1, plane1);
 	// Binary chop values
 	int maxIterations = 5;
 	float min = t;
@@ -324,96 +322,91 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	bool collided = false;
 	Vector3f testPos;
 
-	// Distance to target from position
-	float distance = 0;
-	for (int i = 0; i < maxIterations; ++i)
+	// Constraints
+	if ((fPos1.GetY() - radius1) < 7.5f * Game::scaleTweakable && (fPos1.GetY() + radius1) > -7.5f * Game::scaleTweakable)
 	{
-		// Get new position based on current DT value
-		testPos = pos1 + (vel1 * currentDT);
-
-		// Sphere-to-Plane distance test 
-		distance = pNormal.dot((testPos - pOrigin)) - radius1;
-
-		// Above plane
-		if (distance > 0)
+		if ((projection.GetX() + radius1) > -width && (projection.GetX() - radius1) < width &&
+			(projection.GetZ() + radius1) > -length && (projection.GetZ() - radius1) < length)
 		{
-			min = currentDT;
-			safePos = testPos;
-		}
-		else if (distance <= 0)
-		{
-			max = currentDT;
-			collided = true;
-		}
+			// Distance to target from position
+			float distance = 0;
+			for (int i = 0; i < maxIterations; ++i)
+			{
+				//Vector3f cNormal = (fPos1 - projection);
 
-		currentDT = (max - min) / 2;
+				// Get new position based on current DT value
+				testPos = pos1 + (vel1 * currentDT);
+
+				// Sphere-to-Plane distance test 
+				distance = pNormal.dot((testPos - pOrigin)) - radius1;
+				//distance = testPos.distance(projection) - radius1;
+
+				// Above plane
+				if (distance > 0)
+				{
+					min = currentDT;
+					safePos = testPos;
+				}
+				else if (distance <= 0)
+				{
+					max = currentDT;
+					collided = true;
+				}
+				currentDT = (max - min) / 2;
+
+			}
+
+			if (collided == true)
+			{
+				sphere1->SetNewPos(safePos);
+			}
+
+			return collided;
+		}
 	}
 
-	if (collided == true)
-	{
-		sphere1->SetNewPos(safePos);
-	}
-
-	return collided;
+	return false;
 }
 
-bool PhysicsManager::WithinBoundsCheck(Vector3f spherePos, float sphereRad, Plane* plane)
+Vector3f PhysicsManager::PlaneProjection(Sphere* sphere1, Plane* plane)
 {
+	// Project Sphere onto Plane
+	Vector3f v = plane->GetPos() - sphere1->GetPos();
 
-	//float distance = -1;
+	float valueInX = v.dot(plane->right);
+	float valueInY = v.dot(plane->forward);
 
+	Vector3f localSpacePos = Vector3f(valueInX, 0.0f, valueInY);
+	// Create and 'fire' ray
+	//Vector3f ray = oldPos - originalPos;
+	//ray = ray.normalise();
+
+	// Determine intersection p oint
+	//float t = -((plane->normal.dot(originalPos)) + distance) / plane->normal.dot(ray);
+
+	//Vector3f intersection = originalPos + (ray * currentDT);
 	/*
-	// Up
-	if ((spherePos.GetY() + sphereRad) < -7.5f * Game::scaleTweakable)
+	// Determine if collision was within bounds
+	Vector3f v1 = (testPos - plane->topLeft).normalise();
+	Vector3f v2 = (testPos - plane->topRight).normalise();
+	Vector3f v3 = (testPos - plane->botRight).normalise();
+
+	// Get total sum of all angles in relation to test point
+	float angleSum =
+		acos(v1.dot(v2)) +
+		acos(v2.dot(v3)) +
+		acos(v3.dot(v1));
+
+	if (fabs(angleSum - (2 * M_PI)) < 0.1f)
+	{
+		return true;
+	}
+	else
 	{
 		return false;
-	}
-
-	if ((spherePos.GetY() - sphereRad) > 7.5f * Game::scaleTweakable)
-	{
-		return false;
-	}
-	// Front
-	if ((spherePos.GetZ() + sphereRad) > planeList[3]->length)
-	{
-		return false;
-	}
-
-	// Back
-	if ((spherePos.GetZ() - sphereRad) < -(planeList[4]->length))
-	{
-		return false;
-	}
-
-	// Left
-	if ((spherePos.GetX() - sphereRad) < -(planeList[5]->width))
-	{
-		return false;
-	}
-
-	// Right
-	if ((spherePos.GetX() + sphereRad) > planeList[6]->width)
-	{
-		return false;
-	}
-	
-
-	for (int i = 3; i < 6; i++)
-	{
-		// Check the 'distance' from each wall,
-		// is the sphere position inside the box?
-		distance = planeList[i]->normal.dot((spherePos - planeList[i]->m_pos)) - sphereRad;
-
-		// If the distance is greater than 0,
-		// Sphere must be inside the walls
-		if (distance > 0)
-		{
-			return true;
-		}
 	}
 	*/
-	// the sphere is outside the box on the X or Z
-	return false;
+	return localSpacePos;
 }
 
 /*
@@ -527,4 +520,14 @@ void PhysicsManager::DecrementElasticity(void)
 float PhysicsManager::GetCoR(void) const
 {
 	return m_CoR;
+}
+
+Vector3f PhysicsManager::CrossProduct(Vector3f vec1, Vector3f vec2)
+{
+	Vector3f vec3;
+
+	vec3.SetX((vec1.GetY() * vec2.GetZ()) - (vec1.GetZ() * vec2.GetY()));
+	vec3.SetY((vec1.GetZ() * vec2.GetX()) - (vec1.GetX() * vec2.GetZ()));
+	vec3.SetZ((vec1.GetX() * vec2.GetY()) - (vec1.GetY() * vec2.GetX()));
+	return vec3;
 }
