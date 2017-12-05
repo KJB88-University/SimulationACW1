@@ -33,8 +33,9 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	tray1->SetupTray();
 	objVector.emplace_back(tray1);
 	// Add to Box container
-	physicsManager->planeList.emplace_back(tray1);
+	//physicsManager->planeList.emplace_back(tray1);
 
+	/*
 	// Mid Tray
 	tray2 = new Plane
 	(
@@ -48,8 +49,9 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	tray2->SetupTray();
 	objVector.emplace_back(tray2);
 	// Add to Box container
-	physicsManager->planeList.emplace_back(tray2);
-	
+	//physicsManager->planeList.emplace_back(tray2);
+	*/
+
 	// Top Tray
 	tray3 = new Plane
 	(
@@ -63,7 +65,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	tray3->SetupTray();
 	objVector.emplace_back(tray3);
 	// Add to Box container
-	physicsManager->planeList.emplace_back(tray3);
+	//physicsManager->planeList.emplace_back(tray3);
 #pragma endregion
 
 #pragma region PLANES
@@ -80,7 +82,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(-1.0f, 0.0, 0.0f)
 		);
 	objVector.emplace_back(plane);
-	physicsManager->planeList.emplace_back(plane);
+	//physicsManager->planeList.emplace_back(plane);
 
 	// 'Back' face
 	plane = new Plane
@@ -93,7 +95,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(1.0f, 0.0f, 0.0f)
 		);
 	objVector.emplace_back(plane);
-	physicsManager->planeList.emplace_back(plane);
+	//physicsManager->planeList.emplace_back(plane);
 
 	// 'Left' face
 	plane = new Plane		
@@ -106,7 +108,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0.0f, 0.0f, 1.0f)
 		);
 	objVector.emplace_back(plane);
-	physicsManager->planeList.emplace_back(plane);
+	//physicsManager->planeList.emplace_back(plane);
 
 	// 'Right' face
 	plane = new Plane
@@ -119,7 +121,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0.0f, 0.0f, -1.0f)
 		);
 	objVector.emplace_back(plane);
-	physicsManager->planeList.emplace_back(plane);
+	//physicsManager->planeList.emplace_back(plane);
 	
 	
 #pragma endregion
@@ -173,8 +175,8 @@ void Game::CheckInput()
 			new Sphere(
 				Vector3f(0.0f, 11.5f * scaleTweakable, 0.0f),
 				Vector3f(1.25f * scaleTweakable, 0, -0.5f * scaleTweakable),
-				75.0f,
-				5.0f));
+				0.02f * scaleTweakable,
+				0.5f * scaleTweakable));
 	}
 
 	/*

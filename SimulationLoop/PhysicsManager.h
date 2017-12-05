@@ -53,7 +53,7 @@ public:
 
 	// 0-2 Trays (Bot, Mid, Top)
 	// 3-6 Walls (Front, Back, Left, Right);
-	vector<Plane*> planeList;
+	//vector<Plane*> planeList;
 private:
 
 	// Private constructor to avoid instances being created
