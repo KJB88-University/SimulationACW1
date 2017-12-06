@@ -21,7 +21,7 @@ PhysicsManager* PhysicsManager::GetInstance()
 // CONSTRUCTOR
 PhysicsManager::PhysicsManager()
 {
-	m_CoR = 0.5f;
+	m_CoR = 0.75f;
 }
 
 // RK4 Implementation
@@ -269,8 +269,37 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 		testPos = pos1 + (vel1 * currentDT);
 
 		// S2S distance test
-		//distance = testPos.distance(pos1) - (sphere1->GetRadius() + sphere2->GetRadius());
-		distance = sphere1->GetPos().distance(sphere2->GetPos()) - (sphere1->GetRadius() + sphere2->GetRadius());
+		Vector3f vecs = testPos - pos2;
+		Vector3f vecv = vel1 - sphere2->GetVel();
+		float radiiSum = r1 + r2;
+
+		distance = vecs.dot(vecs);
+		if (distance < 0)
+		{
+			distance = -1;
+		}
+
+		distance = radiiSum * radiiSum;
+		if (distance < 0)
+		{
+			distance = -1;
+		}
+
+		float b = vecv.dot(vecs);
+		float a = vecv.dot(vecv);
+		if (b >= 0)
+		{
+			distance = -1;
+		}
+
+		distance = b * b - a * vecs.dot(vecs);
+		//distance = b * b - a * vecs.dot(vecs);
+		float time = (-b - sqrt(distance)) / a;
+
+		testPos = pos1 + (vel1 * time);
+		//distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
+		//distance = sphere1->GetPos().distance(sphere2->GetPos())- (sphere1->GetRadius() + sphere2->GetRadius());
+
 		// Above plane
 		if (distance > 0)
 		{
@@ -311,6 +340,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	float width = plane1->width;
 
 	Vector3f projection = PlaneProjection(sphere1, plane1);
+
 	// Binary chop values
 	int maxIterations = 5;
 	float min = t;
@@ -470,7 +500,7 @@ void PhysicsManager::SphereToSphereCollisionResponse
 {
 	// Grab required data
 	Sphere* sphere2 = static_cast<Sphere*>(point.contactID2);
-	/*
+	
 	Vector3f s1Pos = point.contactID1->GetNewPos();
 	Vector3f s1Vel = point.contactID1->GetVel();
 	float s1Mass = point.contactID1->GetMass();
@@ -481,26 +511,25 @@ void PhysicsManager::SphereToSphereCollisionResponse
 
 	// Collision-related data
 	Vector3f lineOfCentres = (s2Pos - s1Pos).normalise();
+	//Vector3f cNormal = point.contactNormal;
+	//lineOfCentres = cNormal;
 
 	// Calculate the oblique impact formula
-	Vector3f VL1 = (((s1Mass - (m_CoR * s2Mass)) * (lineOfCentres.dot(s1Vel) * lineOfCentres)) +
-		((s2Mass + (m_CoR * s2Mass)) * (lineOfCentres.dot(s2Vel) * lineOfCentres))) / (s1Mass + s2Mass);
-	Vector3f VL2 = (((s1Mass + (m_CoR * s1Mass)) * (lineOfCentres.dot(s1Vel) * lineOfCentres)) +
-		((s2Mass - (m_CoR * s1Mass)) * (lineOfCentres.dot(s2Vel) * lineOfCentres))) / (s1Mass + s2Mass);
+	Vector3f VL1 = (((s1Mass - (m_CoR * s2Mass)) * (s1Vel.dot(lineOfCentres) * lineOfCentres)) +
+		((s2Mass + (m_CoR * s2Mass)) * (s2Vel.dot(lineOfCentres) * lineOfCentres))) / (s1Mass + s2Mass);
+	Vector3f VL2 = (((s1Mass + (m_CoR * s1Mass)) * (s1Vel.dot(lineOfCentres) * lineOfCentres)) +
+		((s2Mass - (m_CoR * s1Mass)) * (s2Vel.dot(lineOfCentres) * lineOfCentres))) / (s1Mass + s2Mass);
 
 	// Calculate new vectors based on previous formula
-	Vector3f nV1 = s1Vel - (lineOfCentres.dot(s1Pos) * lineOfCentres) + VL1;
-	Vector3f nV2 = s2Vel - (lineOfCentres.dot(s2Pos) * lineOfCentres) + VL2;
+	Vector3f nV1 = (s1Vel - (s1Vel.dot(lineOfCentres) * lineOfCentres)) + VL1;
+	Vector3f nV2 = (s2Vel - (s2Vel.dot(lineOfCentres) * lineOfCentres)) + VL2;
 
 	// Apply vectors to spheres
-	point.contactID1->ResetPos();
-	sphere2->ResetPos();
-
-	point.contactID1->SetNewVel(s1Vel);
-	sphere2->SetNewVel(s2Vel);
-	*/
+	point.contactID1->SetNewVel(nV1);
+	sphere2->SetNewVel(nV2);
+	
 		// TODO - Change to realistic Response
-		
+		/*
 		Vector3f colNormal = point.contactNormal;
 
 		point.contactID1->ResetPos();
@@ -510,6 +539,7 @@ void PhysicsManager::SphereToSphereCollisionResponse
 		sphere2->ResetPos();
 		sphere2->SetNewVel(
 			-1.0f * colNormal * colNormal.dot(sphere2->GetVel()));
+			*/
 			
 
 
@@ -525,7 +555,8 @@ void PhysicsManager::SphereToPlaneCollisionResponse
 
 	point.contactID1->ResetPos();
 
-	Vector3f newVel = point.contactID1->GetVel() - (1 + m_CoR) * (plane->normal.dot(point.contactID1->GetVel()) * plane->normal);
+	Vector3f newVel = point.contactID1->GetVel() - (1 + m_CoR)
+		* (plane->normal.dot(point.contactID1->GetVel()) * plane->normal);
 	/*
 	Vector3f newVel = point.contactID1->GetVel() - 2 * (point.contactID1->GetVel().dot(colNormal)) * colNormal;
 	*/
