@@ -263,17 +263,20 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 
 	// Distance to target from position
 	float distance = 0;
+	float time = 0;
 	for (int i = 0; i < maxIterations; ++i)
 	{
 		// Get new position based on current DT value
 		testPos = pos1 + (vel1 * currentDT);
 
 		// S2S distance test
-		Vector3f vecs = testPos - pos2;
-		Vector3f vecv = vel1 - sphere2->GetVel();
+		Vector3f lineOfImpact = testPos - pos2;
+
+		
+		Vector3f relativeVel = vel1 - sphere2->GetVel();
 		float radiiSum = r1 + r2;
 
-		distance = vecs.dot(vecs);
+		distance = lineOfImpact.dot(lineOfImpact);
 		if (distance < 0)
 		{
 			distance = -1;
@@ -285,26 +288,26 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 			distance = -1;
 		}
 
-		float b = vecv.dot(vecs);
-		float a = vecv.dot(vecv);
+		float b = relativeVel.dot(lineOfImpact);
+		float a = relativeVel.dot(relativeVel);
 		if (b >= 0)
 		{
 			distance = -1;
 		}
 
-		distance = b * b - a * vecs.dot(vecs);
+		float d = b * b - a * lineOfImpact.dot(lineOfImpact);
 		//distance = b * b - a * vecs.dot(vecs);
-		float time = (-b - sqrt(distance)) / a;
-
-		testPos = pos1 + (vel1 * time);
+		time = (-b - sqrt(distance)) / a;
+		
+		//testPos = pos1 + (vel1 * time);
 		//distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
 		//distance = sphere1->GetPos().distance(sphere2->GetPos())- (sphere1->GetRadius() + sphere2->GetRadius());
 
 		// Above plane
 		if (distance > 0)
 		{
-			min = currentDT;
 			safePos = testPos;
+			min = currentDT;
 		}
 		else if (distance <= 0)
 		{
@@ -317,7 +320,8 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 
 	if (collided == true)
 	{
-		sphere1->SetNewPos(safePos);
+		//safePos = pos1 + (vel1 * time);
+		sphere1->m_pos = safePos;
 	}
 
 	return collided;
@@ -373,8 +377,17 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 				// Above plane
 				if (distance > 0)
 				{
-					min = currentDT;
 					safePos = testPos;
+
+					// Minimum separated
+					if (distance <= 0.05f)
+					{
+						break;
+					}
+					else
+					{
+						min = currentDT;
+					}
 				}
 				else if (distance <= 0)
 				{
@@ -501,7 +514,7 @@ void PhysicsManager::SphereToSphereCollisionResponse
 	// Grab required data
 	Sphere* sphere2 = static_cast<Sphere*>(point.contactID2);
 	
-	Vector3f s1Pos = point.contactID1->GetNewPos();
+	Vector3f s1Pos = point.contactID1->GetPos();
 	Vector3f s1Vel = point.contactID1->GetVel();
 	float s1Mass = point.contactID1->GetMass();
 
@@ -510,20 +523,20 @@ void PhysicsManager::SphereToSphereCollisionResponse
 	float s2Mass = sphere2->GetMass();
 
 	// Collision-related data
-	Vector3f lineOfCentres = (s2Pos - s1Pos).normalise();
+	Vector3f cNormal = (s1Pos - s2Pos).normalise();
 	//Vector3f cNormal = point.contactNormal;
 	//lineOfCentres = cNormal;
 
 	// Calculate the oblique impact formula
-	Vector3f VL1 = (((s1Mass - (m_CoR * s2Mass)) * (s1Vel.dot(lineOfCentres) * lineOfCentres)) +
-		((s2Mass + (m_CoR * s2Mass)) * (s2Vel.dot(lineOfCentres) * lineOfCentres))) / (s1Mass + s2Mass);
-	Vector3f VL2 = (((s1Mass + (m_CoR * s1Mass)) * (s1Vel.dot(lineOfCentres) * lineOfCentres)) +
-		((s2Mass - (m_CoR * s1Mass)) * (s2Vel.dot(lineOfCentres) * lineOfCentres))) / (s1Mass + s2Mass);
+	Vector3f VL1 = (((s1Mass - (m_CoR * s2Mass)) * (s1Vel.dot(cNormal) * cNormal)) +
+		((s2Mass + (m_CoR * s2Mass)) * (s2Vel.dot(cNormal) * cNormal))) / (s1Mass + s2Mass);
+	Vector3f VL2 = (((s1Mass + (m_CoR * s1Mass)) * (s1Vel.dot(cNormal) * cNormal)) +
+		((s2Mass - (m_CoR * s1Mass)) * (s2Vel.dot(cNormal) * cNormal))) / (s1Mass + s2Mass);
 
 	// Calculate new vectors based on previous formula
-	Vector3f nV1 = (s1Vel - (s1Vel.dot(lineOfCentres) * lineOfCentres)) + VL1;
-	Vector3f nV2 = (s2Vel - (s2Vel.dot(lineOfCentres) * lineOfCentres)) + VL2;
-
+	Vector3f nV1 = (s1Vel - (s1Vel.dot(cNormal) * cNormal)) + VL1;
+	Vector3f nV2 = (s2Vel - (s2Vel.dot(cNormal) * cNormal)) + VL2;
+	
 	// Apply vectors to spheres
 	point.contactID1->SetNewVel(nV1);
 	sphere2->SetNewVel(nV2);
