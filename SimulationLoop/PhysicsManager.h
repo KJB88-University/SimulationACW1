@@ -78,6 +78,7 @@ private:
 	bool IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt);
 	//bool IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt);
 	bool IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt);
+	bool ApproximateCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt);
 
 
 		// COLLISION RESPONSE

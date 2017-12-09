@@ -21,7 +21,7 @@ PhysicsManager* PhysicsManager::GetInstance()
 // CONSTRUCTOR
 PhysicsManager::PhysicsManager()
 {
-	m_CoR = 0.75f;
+	m_CoR = 0.5f;
 }
 
 // RK4 Implementation
@@ -246,41 +246,40 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 	Vector3f pos1 = sphere1->GetPos();
 	Vector3f vel1 = sphere1->GetVel();
 	float r1 = sphere1->GetRadius();
+	Vector3f fPos1 = sphere1->GetNewPos();
 
 	Vector3f pos2 = sphere2->GetPos();
+	Vector3f fPos2 = sphere2->GetNewPos();
 	float r2 = sphere2->GetRadius();
 
+
+
 	// Binary chop values
-	int maxIterations = 5;
-	float min = t;
-	float max = dt;
-	float currentDT = (max + min) / 2;
+	float minN = 0.0f;
+	float maxN = 1.0f;
+	float currentN = 0.5f;
 
 	// Output values
-	Vector3f testPos;
+	Vector3f testPos = pos1;
+	Vector3f collisionDirection;
 	Vector3f safePos;
 	bool collided = false;
 
 	// Distance to target from position
 	float distance = 0;
-	float time = 0;
+	//float time = 0;
 	for (int i = 0; i < maxIterations; ++i)
 	{
+		collisionDirection = (fPos1 - fPos2).normalise();
 		// Get new position based on current DT value
-		testPos = pos1 + (vel1 * currentDT);
+		testPos = pos1 + (collisionDirection * currentN);
 
+		/*
 		// S2S distance test
-		Vector3f lineOfImpact = testPos - pos2;
-
-		
-		Vector3f relativeVel = vel1 - sphere2->GetVel();
+		Vector3f lineOfImpact = sphere1->GetNewPos() - pos2;
 		float radiiSum = r1 + r2;
 
-		distance = lineOfImpact.dot(lineOfImpact);
-		if (distance < 0)
-		{
-			distance = -1;
-		}
+		//distance = lineOfImpact.dot(lineOfImpact);
 
 		distance = radiiSum * radiiSum;
 		if (distance < 0)
@@ -288,6 +287,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 			distance = -1;
 		}
 
+		Vector3f relativeVel = vel1 - sphere2->GetVel();
 		float b = relativeVel.dot(lineOfImpact);
 		float a = relativeVel.dot(relativeVel);
 		if (b >= 0)
@@ -298,40 +298,65 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 		float d = b * b - a * lineOfImpact.dot(lineOfImpact);
 		//distance = b * b - a * vecs.dot(vecs);
 		time = (-b - sqrt(distance)) / a;
-		
+		*/
 		//testPos = pos1 + (vel1 * time);
-		//distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
-		//distance = sphere1->GetPos().distance(sphere2->GetPos())- (sphere1->GetRadius() + sphere2->GetRadius());
+		//distance = fPos2.distance(testPos) - (sphere1->GetRadius() + sphere2->GetRadius());
+		distance = testPos.distance(pos2)- (sphere1->GetRadius() + sphere2->GetRadius());
 
 		// Above plane
 		if (distance > 0)
 		{
 			safePos = testPos;
-			min = currentDT;
+			minN = currentN;
 		}
 		else if (distance <= 0)
 		{
-			max = currentDT;
+			maxN = currentN;
 			collided = true;
 		}
 
-		currentDT = (max + min) / 2;
+		currentN = (maxN + minN) / 2;
 	}
 
 	if (collided == true)
 	{
+		safePos = testPos;
 		//safePos = pos1 + (vel1 * time);
-		sphere1->m_pos = safePos;
+	sphere1->SetNewPos(safePos);
 	}
 
 	return collided;
+}
+
+bool PhysicsManager::ApproximateCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt)
+{
+	Vector3f pos1 = sphere1->GetPos();
+	Vector3f fPos1 = sphere1->GetNewPos();
+	Vector3f vel1 = sphere1->GetVel();
+	Vector3f fVel1 = sphere1->GetNewVel();
+	Vector3f accel1 = sphere1->GetAccel();
+	float r1 = sphere1->GetRadius();
+
+	Vector3f pos2 = sphere2->GetPos();
+	Vector3f fPos2 = sphere2->GetNewPos();
+	Vector3f vel2 = sphere2->GetVel();
+	Vector3f fVel2 = sphere2->GetNewVel();
+	Vector3f accel2 = sphere2->GetAccel();
+	float r2 = sphere2->GetRadius();
+
+	// Eqn 1: v = v1 + at
+	// Eqn 2: s = pos1 + vel1 * t + 0.5f * at^2
+	// Eqn 3: v^2 = v1^2 + 2a(newPos - pos1)
+
+	Vector3f temp = Vector3f(pos1.GetX() * pos1.GetX(), pos1.GetY() * pos1.GetY(), pos1.GetZ() * pos1.GetZ());
+	return true;
 }
 
 bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt)
 {
 	// Sphere attributes
 	Vector3f pos1 = sphere1->GetPos();
-	Vector3f vel1 = sphere1->GetVel();
+	Vector3f vel1 = sphere1->GetNewVel();
 	Vector3f fPos1 = sphere1->GetNewPos();
 	float radius1 = sphere1->GetRadius();
 
@@ -344,12 +369,10 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	float width = plane1->width;
 
 	Vector3f projection = PlaneProjection(sphere1, plane1);
-
 	// Binary chop values
-	int maxIterations = 5;
-	float min = t;
-	float max = dt;
-	float currentDT = (max + min) / 2;
+	float minN = 0.0f;
+	float maxN = 1.0f;
+	float currentN = 0.5f;
 
 	// Output values
 	Vector3f safePos;
@@ -357,7 +380,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	Vector3f testPos;
 
 	// Constraints
-	if ((fPos1.GetY() - radius1) < 7.5f * Game::scaleTweakable && (fPos1.GetY() + radius1) > -7.5f * Game::scaleTweakable)
+	if ((fPos1.GetY() - radius1) < (7.5f * Game::scaleTweakable) && (fPos1.GetY() + radius1) > (-7.5f * Game::scaleTweakable))
 	{
 		if ((projection.GetX() + radius1) > -width && (projection.GetX() - radius1) < width &&
 			(projection.GetZ() + radius1) > -length && (projection.GetZ() - radius1) < length)
@@ -366,13 +389,12 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 			float distance = 0;
 			for (int i = 0; i < maxIterations; ++i)
 			{
-
 				// Get new position based on current DT value
-				testPos = pos1 + (vel1 * currentDT);
+				//testPos = pos1 + (vel1 * currentDT);
+				testPos = pos1 + (vel1 * currentN);
 
 				// Sphere-to-Plane distance test 
 				distance = pNormal.dot((testPos - pOrigin)) - radius1;
-				//distance = testPos.distance(projection) - radius1;
 
 				// Above plane
 				if (distance > 0)
@@ -380,21 +402,22 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 					safePos = testPos;
 
 					// Minimum separated
-					if (distance <= 0.05f)
+					if (distance <= 0.001f)
 					{
 						break;
 					}
 					else
 					{
-						min = currentDT;
+						minN = currentN;
 					}
 				}
 				else if (distance <= 0)
 				{
-					max = currentDT;
+					maxN = currentN;
 					collided = true;
 				}
-				currentDT = (max + min) / 2;
+
+				currentN = (maxN + minN) / 2;
 
 			}
 
@@ -419,35 +442,6 @@ Vector3f PhysicsManager::PlaneProjection(Sphere* sphere1, Plane* plane)
 	float valueInY = v.dot(plane->forward);
 
 	Vector3f localSpacePos = Vector3f(valueInX, 0.0f, valueInY);
-	// Create and 'fire' ray
-	//Vector3f ray = oldPos - originalPos;
-	//ray = ray.normalise();
-
-	// Determine intersection p oint
-	//float t = -((plane->normal.dot(originalPos)) + distance) / plane->normal.dot(ray);
-
-	//Vector3f intersection = originalPos + (ray * currentDT);
-	/*
-	// Determine if collision was within bounds
-	Vector3f v1 = (testPos - plane->topLeft).normalise();
-	Vector3f v2 = (testPos - plane->topRight).normalise();
-	Vector3f v3 = (testPos - plane->botRight).normalise();
-
-	// Get total sum of all angles in relation to test point
-	float angleSum =
-		acos(v1.dot(v2)) +
-		acos(v2.dot(v3)) +
-		acos(v3.dot(v1));
-
-	if (fabs(angleSum - (2 * M_PI)) < 0.1f)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-	*/
 	return localSpacePos;
 }
 
