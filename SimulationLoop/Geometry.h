@@ -25,6 +25,7 @@ public:
 	virtual Vector3f GetPos(void) const;
 	virtual float GetMass(void) const;
 	virtual int GetID(void) const;
+	virtual void SetPos(Vector3f inPos);
 
 	// Simulation Loop Methods
 	virtual void CalculatePhysics(float dt, float t) = 0;
@@ -45,6 +46,5 @@ protected:
 	const int k_objectID;
 	GLuint m_texture;
 
-	// 'Properties'
-	virtual void SetPos(Vector3f inPos);
+
 };

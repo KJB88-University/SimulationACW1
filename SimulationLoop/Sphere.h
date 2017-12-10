@@ -29,6 +29,7 @@ public:
 	void SetNewVel(Vector3f vel);
 	void SetForce(Vector3f force);
 	void SetAccel(Vector3f accel);
+	void SetVel(Vector3f vel);
 	Vector3f GetAccel() const;
 	Vector3f GetForce() const;
 	Vector3f GetNewPos() const;
@@ -41,6 +42,7 @@ public:
 	void Render();
 
 	Vector3f collisionNormal;
+	bool atRest = false;
 
 private:
 	

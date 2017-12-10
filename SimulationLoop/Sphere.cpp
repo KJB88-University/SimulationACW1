@@ -85,6 +85,10 @@ Vector3f Sphere::GetAccel() const
 	return m_acceleration;
 }
 
+void Sphere::SetVel(Vector3f vel)
+{
+	m_velocity = vel;
+}
 #pragma endregion
 
 #pragma region SIMULATION_LOOP
@@ -156,9 +160,7 @@ void Sphere::CollisionResponse(ManifoldPoint &point)
 
 void Sphere::Update()
 {
-
-	m_velocity = m_newVelocity;
-	m_pos = m_newPos;
+	physics->CalculatePostPhysics(this);
 }
 #pragma endregion
 

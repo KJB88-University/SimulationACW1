@@ -139,8 +139,9 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 					ManifoldPoint mp;
 					mp.contactID1 = sphere1;
 					mp.contactID2 = sphere2;
-					mp.contactNormal = (sphere1->GetPos() - sphere2->GetPos()).normalise();
+					mp.contactNormal = (sphere1->GetNewPos() - sphere2->GetNewPos()).normalise();
 					contactManifold->Add(mp);
+
 				}
 			}
 		}
@@ -252,8 +253,6 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 	Vector3f fPos2 = sphere2->GetNewPos();
 	float r2 = sphere2->GetRadius();
 
-
-
 	// Binary chop values
 	float minN = 0.0f;
 	float maxN = 1.0f;
@@ -301,7 +300,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 		*/
 		//testPos = pos1 + (vel1 * time);
 		//distance = fPos2.distance(testPos) - (sphere1->GetRadius() + sphere2->GetRadius());
-		distance = testPos.distance(pos2)- (sphere1->GetRadius() + sphere2->GetRadius());
+		distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
 
 		// Above plane
 		if (distance > 0)
@@ -322,37 +321,13 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 	{
 		safePos = testPos;
 		//safePos = pos1 + (vel1 * time);
-	sphere1->SetNewPos(safePos);
+		sphere1->SetNewPos(safePos);
 	}
 
 	return collided;
 }
 
-bool PhysicsManager::ApproximateCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt)
-{
-	Vector3f pos1 = sphere1->GetPos();
-	Vector3f fPos1 = sphere1->GetNewPos();
-	Vector3f vel1 = sphere1->GetVel();
-	Vector3f fVel1 = sphere1->GetNewVel();
-	Vector3f accel1 = sphere1->GetAccel();
-	float r1 = sphere1->GetRadius();
-
-	Vector3f pos2 = sphere2->GetPos();
-	Vector3f fPos2 = sphere2->GetNewPos();
-	Vector3f vel2 = sphere2->GetVel();
-	Vector3f fVel2 = sphere2->GetNewVel();
-	Vector3f accel2 = sphere2->GetAccel();
-	float r2 = sphere2->GetRadius();
-
-	// Eqn 1: v = v1 + at
-	// Eqn 2: s = pos1 + vel1 * t + 0.5f * at^2
-	// Eqn 3: v^2 = v1^2 + 2a(newPos - pos1)
-
-	Vector3f temp = Vector3f(pos1.GetX() * pos1.GetX(), pos1.GetY() * pos1.GetY(), pos1.GetZ() * pos1.GetZ());
-	return true;
-}
-
-bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt)
+bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt, Vector3f& outNormal)
 {
 	// Sphere attributes
 	Vector3f pos1 = sphere1->GetPos();
@@ -423,6 +398,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 
 			if (collided == true)
 			{
+				safePos = testPos;
 				sphere1->SetNewPos(safePos);
 			}
 
@@ -469,25 +445,6 @@ bool PhysicsManager::IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere*
 }
 */
 #pragma endregion
-/*
-void PhysicsManager::SphereToSphereCollisionDetection
-(Sphere* sphere1, Sphere* sphere2, ContactManifold *contactManifold)
-{
-	// TODO - change to reliable Detection
-	Vector3f pos1 = sphere1->GetNewPos();
-	Vector3f pos2 = sphere2->GetNewPos();
-	float dist = pos1.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
-	if (dist < 0.0f)
-	{
-		ManifoldPoint mp;
-		mp.contactID1 = sphere1;
-		mp.contactID2 = sphere2;
-		mp.contactNormal = (pos2 - pos1).normalise();
-		contactManifold->Add(mp);
-	}
-
-}
-*/
 
 void PhysicsManager::CollisionResponse(ManifoldPoint &point)
 {
@@ -507,7 +464,7 @@ void PhysicsManager::SphereToSphereCollisionResponse
 {
 	// Grab required data
 	Sphere* sphere2 = static_cast<Sphere*>(point.contactID2);
-	
+
 	Vector3f s1Pos = point.contactID1->GetPos();
 	Vector3f s1Vel = point.contactID1->GetVel();
 	float s1Mass = point.contactID1->GetMass();
@@ -517,8 +474,8 @@ void PhysicsManager::SphereToSphereCollisionResponse
 	float s2Mass = sphere2->GetMass();
 
 	// Collision-related data
-	Vector3f cNormal = (s1Pos - s2Pos).normalise();
-	//Vector3f cNormal = point.contactNormal;
+	//Vector3f cNormal = (s1Pos - s2Pos).normalise();
+	Vector3f cNormal = point.contactNormal;
 	//lineOfCentres = cNormal;
 
 	// Calculate the oblique impact formula
@@ -530,24 +487,24 @@ void PhysicsManager::SphereToSphereCollisionResponse
 	// Calculate new vectors based on previous formula
 	Vector3f nV1 = (s1Vel - (s1Vel.dot(cNormal) * cNormal)) + VL1;
 	Vector3f nV2 = (s2Vel - (s2Vel.dot(cNormal) * cNormal)) + VL2;
-	
+
 	// Apply vectors to spheres
 	point.contactID1->SetNewVel(nV1);
 	sphere2->SetNewVel(nV2);
-	
-		// TODO - Change to realistic Response
-		/*
-		Vector3f colNormal = point.contactNormal;
 
-		point.contactID1->ResetPos();
-		point.contactID1->SetNewVel(
-			-1.0f * colNormal * colNormal.dot(point.contactID1->GetVel()));
+	// TODO - Change to realistic Response
+	/*
+	Vector3f colNormal = point.contactNormal;
 
-		sphere2->ResetPos();
-		sphere2->SetNewVel(
-			-1.0f * colNormal * colNormal.dot(sphere2->GetVel()));
-			*/
-			
+	point.contactID1->ResetPos();
+	point.contactID1->SetNewVel(
+		-1.0f * colNormal * colNormal.dot(point.contactID1->GetVel()));
+
+	sphere2->ResetPos();
+	sphere2->SetNewVel(
+		-1.0f * colNormal * colNormal.dot(sphere2->GetVel()));
+		*/
+
 
 
 }
@@ -567,10 +524,17 @@ void PhysicsManager::SphereToPlaneCollisionResponse
 	/*
 	Vector3f newVel = point.contactID1->GetVel() - 2 * (point.contactID1->GetVel().dot(colNormal)) * colNormal;
 	*/
+
 	point.contactID1->SetNewVel(newVel);
-	
 }
 
+void PhysicsManager::CalculatePostPhysics(Sphere* sphere)
+{
+
+	sphere->SetVel(sphere->GetNewVel());
+	sphere->SetPos(sphere->GetNewPos());
+
+}
 void PhysicsManager::SetCoR(float newCoR)
 {
 	m_CoR = newCoR;
