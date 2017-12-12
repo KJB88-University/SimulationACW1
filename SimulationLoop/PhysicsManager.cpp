@@ -22,6 +22,7 @@ PhysicsManager* PhysicsManager::GetInstance()
 PhysicsManager::PhysicsManager()
 {
 	m_CoR = 0.5f;
+	m_CoF = 0.75f;
 }
 
 // RK4 Implementation
@@ -108,15 +109,37 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 	if (geometry1->objType == SPHERE && geometry1->GetID() != geometry2->GetID())
 	{
 		Sphere* sphere1 = static_cast<Sphere*>(geometry1);
+		Vector3f& normal = Vector3f(0, 0, 0);
+
+		// If the geometry is a SPHERE
+		// Do collision detection
+		if (geometry2->objType == SPHERE)
+		{
+			Sphere* sphere2 = static_cast<Sphere*>(geometry2);
+			distance = sphere1->GetPos().distance(sphere2->GetPos()) - (sphere1->GetRadius() + sphere2->GetRadius());
+
+			if (distance <= 0.0f)
+			{
+				if (IterativeCollisionDetectionS2S(sphere1, sphere2, t, dt, normal))
+				{
+					ManifoldPoint mp;
+					mp.contactID1 = sphere1;
+					mp.contactID2 = sphere2;
+					mp.contactNormal = (sphere1->GetNewPos() - sphere2->GetNewPos()).normalise();
+					contactManifold->Add(mp);
+				}
+			}
+		}
 
 		// If the geometry is a PLANE
-		// Do plane collision detection
-		if (geometry2->objType == PLANE)
+		// Do collision detection
+		else if (geometry2->objType == PLANE)
 		{
 			Plane* plane = static_cast<Plane*>(geometry2);
 			distance = plane->normal.dot(sphere1->GetPos() - plane->GetPos()) - sphere1->GetRadius();
 			if (distance <= 0.0f)
 			{
+
 				if (IterativeCollisionDetectionS2P(sphere1, plane, t, dt))
 				{
 					ManifoldPoint mp;
@@ -127,24 +150,7 @@ void PhysicsManager::CollisionDetection(Geometry* geometry1, Geometry* geometry2
 				}
 			}
 		}
-		else if (geometry2->objType == SPHERE)
-		{
-			Sphere* sphere2 = static_cast<Sphere*>(geometry2);
-			distance = sphere1->GetPos().distance(sphere2->GetPos()) - (sphere1->GetRadius() + sphere2->GetRadius());
 
-			if (distance <= 0.0f)
-			{
-				if (IterativeCollisionDetectionS2S(sphere1, sphere2, t, dt))
-				{
-					ManifoldPoint mp;
-					mp.contactID1 = sphere1;
-					mp.contactID2 = sphere2;
-					mp.contactNormal = (sphere1->GetNewPos() - sphere2->GetNewPos()).normalise();
-					contactManifold->Add(mp);
-
-				}
-			}
-		}
 	}
 
 }
@@ -241,7 +247,7 @@ void PhysicsManager::IterativeCollisionDetection(Sphere* sphere1, Geometry* geom
 	}
 }
 */
-bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt)
+bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt, Vector3f& outNormal)
 {
 	// Object attributes
 	Vector3f pos1 = sphere1->GetPos();
@@ -266,40 +272,13 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 
 	// Distance to target from position
 	float distance = 0;
-	//float time = 0;
 	for (int i = 0; i < maxIterations; ++i)
 	{
 		collisionDirection = (fPos1 - fPos2).normalise();
+
 		// Get new position based on current DT value
 		testPos = pos1 + (collisionDirection * currentN);
 
-		/*
-		// S2S distance test
-		Vector3f lineOfImpact = sphere1->GetNewPos() - pos2;
-		float radiiSum = r1 + r2;
-
-		//distance = lineOfImpact.dot(lineOfImpact);
-
-		distance = radiiSum * radiiSum;
-		if (distance < 0)
-		{
-			distance = -1;
-		}
-
-		Vector3f relativeVel = vel1 - sphere2->GetVel();
-		float b = relativeVel.dot(lineOfImpact);
-		float a = relativeVel.dot(relativeVel);
-		if (b >= 0)
-		{
-			distance = -1;
-		}
-
-		float d = b * b - a * lineOfImpact.dot(lineOfImpact);
-		//distance = b * b - a * vecs.dot(vecs);
-		time = (-b - sqrt(distance)) / a;
-		*/
-		//testPos = pos1 + (vel1 * time);
-		//distance = fPos2.distance(testPos) - (sphere1->GetRadius() + sphere2->GetRadius());
 		distance = testPos.distance(pos2) - (sphere1->GetRadius() + sphere2->GetRadius());
 
 		// Above plane
@@ -320,14 +299,14 @@ bool PhysicsManager::IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sph
 	if (collided == true)
 	{
 		safePos = testPos;
-		//safePos = pos1 + (vel1 * time);
 		sphere1->SetNewPos(safePos);
+		outNormal = collisionDirection;
 	}
 
 	return collided;
 }
 
-bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt, Vector3f& outNormal)
+bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt)
 {
 	// Sphere attributes
 	Vector3f pos1 = sphere1->GetPos();
@@ -344,6 +323,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 	float width = plane1->width;
 
 	Vector3f projection = PlaneProjection(sphere1, plane1);
+
 	// Binary chop values
 	float minN = 0.0f;
 	float maxN = 1.0f;
@@ -365,8 +345,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 			for (int i = 0; i < maxIterations; ++i)
 			{
 				// Get new position based on current DT value
-				//testPos = pos1 + (vel1 * currentDT);
-				testPos = pos1 + (vel1 * currentN);
+				testPos = pos1 + (pNormal * currentN);
 
 				// Sphere-to-Plane distance test 
 				distance = pNormal.dot((testPos - pOrigin)) - radius1;
@@ -375,6 +354,7 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 				if (distance > 0)
 				{
 					safePos = testPos;
+					minN = currentN;
 
 					// Minimum separated
 					if (distance <= 0.001f)
@@ -393,7 +373,6 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 				}
 
 				currentN = (maxN + minN) / 2;
-
 			}
 
 			if (collided == true)
@@ -421,7 +400,6 @@ Vector3f PhysicsManager::PlaneProjection(Sphere* sphere1, Plane* plane)
 	return localSpacePos;
 }
 
-/*
 bool PhysicsManager::IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt)
 {
 	// Object attributes
@@ -433,17 +411,50 @@ bool PhysicsManager::IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere*
 
 	// Binary chop values
 	int maxIterations = 5;
-	float min = t;
-	float max = dt;
-	float currentDT = (max - min) / 2;
+	float minN = 0.0f;
+	float maxN = 1.0f;
+	float currentN = 0.5f;
 
 	// Output values
+	Vector3f testPos = pos1;
+	Vector3f collisionDirection;
 	Vector3f safePos;
 	bool collided = false;
 
-	return false;
+	// Distance to target from position
+	float distance = 0;
+	for (int i = 0; i < maxIterations; ++i)
+	{
+
+		// Get new position based on current DT value
+		testPos = pos1 + (collisionDirection * currentN);
+
+		// Distance check
+
+		// Above plane
+		if (distance > 0)
+		{
+			safePos = testPos;
+			minN = currentN;
+		}
+		else if (distance <= 0)
+		{
+			maxN = currentN;
+			collided = true;
+		}
+
+		currentN = (maxN + minN) / 2;
+	}
+
+	if (collided == true)
+	{
+		safePos = testPos;
+		sphere1->SetNewPos(safePos);
+	}
+
+	return collided;
 }
-*/
+
 #pragma endregion
 
 void PhysicsManager::CollisionResponse(ManifoldPoint &point)
@@ -515,9 +526,9 @@ void PhysicsManager::SphereToPlaneCollisionResponse
 	Plane* plane = static_cast<Plane*>(point.contactID2);
 
 	// TODO VRr = Vi - 2(Vi.dot(N))N
-	Vector3f colNormal = plane->normal;
+	//Vector3f colNormal = plane->normal;
 
-	point.contactID1->ResetPos();
+	//point.contactID1->ResetPos();
 
 	Vector3f newVel = point.contactID1->GetVel() - (1 + m_CoR)
 		* (plane->normal.dot(point.contactID1->GetVel()) * plane->normal);
@@ -530,10 +541,8 @@ void PhysicsManager::SphereToPlaneCollisionResponse
 
 void PhysicsManager::CalculatePostPhysics(Sphere* sphere)
 {
-
 	sphere->SetVel(sphere->GetNewVel());
 	sphere->SetPos(sphere->GetNewPos());
-
 }
 void PhysicsManager::SetCoR(float newCoR)
 {
@@ -544,7 +553,7 @@ void PhysicsManager::IncrementElasticity(void)
 {
 	if (m_CoR + 0.1f != 1.0f)
 	{
-		m_CoR++;
+		m_CoR += 0.05f;
 	}
 }
 
@@ -552,7 +561,7 @@ void PhysicsManager::DecrementElasticity(void)
 {
 	if (m_CoR - 0.1f >= 0.1f)
 	{
-		m_CoR--;
+		m_CoR -= 0.05f;
 	}
 }
 
@@ -561,6 +570,31 @@ float PhysicsManager::GetCoR(void) const
 	return m_CoR;
 }
 
+void PhysicsManager::SetCoF(float newCoF)
+{
+	m_CoF = newCoF;
+}
+
+float PhysicsManager::GetCoF(void) const
+{
+	return m_CoF;
+}
+
+void PhysicsManager::IncrementFriction(void)
+{
+	if (m_CoF + 0.1f != 1.0f)
+	{
+		m_CoF += 0.05f;
+	}
+}
+
+void PhysicsManager::DecrementFriction(void)
+{
+	if (m_CoF - 0.1f >= 0.1f)
+	{
+		m_CoF -= 0.05f;
+	}
+}
 Vector3f PhysicsManager::CrossProduct(Vector3f vec1, Vector3f vec2)
 {
 	Vector3f vec3;

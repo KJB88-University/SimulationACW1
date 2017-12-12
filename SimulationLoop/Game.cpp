@@ -177,6 +177,8 @@ void Game::CheckInput()
 				Vector3f(1.25f * scaleTweakable, 0.0f, -0.5f * scaleTweakable),
 				0.02f * scaleTweakable,
 				0.5f * scaleTweakable));
+
+		noOfBalls++;
 	}
 
 	/*

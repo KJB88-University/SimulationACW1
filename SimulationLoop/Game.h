@@ -19,6 +19,7 @@ public:
 	// Modify the scale of the simulation by this
 	const static float scaleTweakable;
 	static float m_dt;
+	static int noOfBalls;
 
 	Game(HDC hdc);
 	~Game(void);

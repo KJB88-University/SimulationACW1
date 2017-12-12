@@ -181,4 +181,5 @@ void Sphere::Render()
 		gluQuadricNormals(quadric, GLU_SMOOTH);
 		gluSphere(quadric, m_radius, 20, 20);
 	glPopMatrix();
+
 }
