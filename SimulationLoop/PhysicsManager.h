@@ -4,8 +4,8 @@
 #include "ContactManifold.h"
 #include "Geometry.h"
 #include "Sphere.h"
-#include "Game.h"
 #include "Plane.h"
+#include "Hemisphere.h"
 
 class PhysicsManager
 {

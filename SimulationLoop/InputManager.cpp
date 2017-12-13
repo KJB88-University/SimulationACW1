@@ -1,6 +1,5 @@
 #include "InputManager.h"
 
-
 using namespace std;
 InputManager* InputManager::instance = 0;
 

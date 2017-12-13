@@ -4,9 +4,15 @@
 #include <iostream>
 #include "Hemisphere.h"
 #include "PlaneRotation.h"
+#include <thread>
+#include "ConsoleManager.h"
+
+using namespace std;
 
 class Plane;
+class ConsoleManager;
 
+int Game::noOfBalls = 0;
 const float Game::scaleTweakable = 10;
 float Game::m_dt = 0;
 
@@ -17,6 +23,8 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	// Create / Get Managers
 	inputManager = InputManager::GetInstance();
 	physicsManager = PhysicsManager::GetInstance();
+	consoleManager = ConsoleManager::GetInstance();
+	consoleManager->InitConsoleThread();
 
 //#pragma region TRAYS
 	
@@ -32,8 +40,6 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	);
 	tray1->SetupTray();
 	objVector.emplace_back(tray1);
-	// Add to Box container
-	//physicsManager->planeList.emplace_back(tray1);
 
 	/*
 	// Mid Tray
@@ -64,8 +70,6 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	);
 	tray3->SetupTray();
 	objVector.emplace_back(tray3);
-	// Add to Box container
-	//physicsManager->planeList.emplace_back(tray3);
 #pragma endregion
 
 #pragma region PLANES
@@ -82,7 +86,6 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(-1.0f, 0.0, 0.0f)
 		);
 	objVector.emplace_back(plane);
-	//physicsManager->planeList.emplace_back(plane);
 
 	// 'Back' face
 	plane = new Plane
@@ -95,7 +98,6 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(1.0f, 0.0f, 0.0f)
 		);
 	objVector.emplace_back(plane);
-	//physicsManager->planeList.emplace_back(plane);
 
 	// 'Left' face
 	plane = new Plane		
@@ -108,7 +110,6 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0.0f, 0.0f, 1.0f)
 		);
 	objVector.emplace_back(plane);
-	//physicsManager->planeList.emplace_back(plane);
 
 	// 'Right' face
 	plane = new Plane
@@ -121,7 +122,6 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			Vector3f(0.0f, 0.0f, -1.0f)
 		);
 	objVector.emplace_back(plane);
-	//physicsManager->planeList.emplace_back(plane);
 	
 	
 #pragma endregion
@@ -153,6 +153,8 @@ Game::~Game(void)
 
 	// Delete contact manifold
 	delete m_manifold;
+
+	consoleManager->StopUpdating();
 }
 
 void Game::Update()
@@ -179,6 +181,7 @@ void Game::CheckInput()
 				0.5f * scaleTweakable));
 
 		noOfBalls++;
+		consoleManager->UpdateBalls();
 	}
 
 	/*
@@ -265,22 +268,26 @@ void Game::CheckInput()
 
 	if (inputManager->CheckKeyPress('I'))
 	{
-		// TODO - Increase friction magnitude
+		physicsManager->IncrementFriction();
+		consoleManager->UpdateCoF();
 	}
 
 	if (inputManager->CheckKeyPress('K'))
 	{
-		// TODO - Decrease friction magnitude
+		physicsManager->DecrementFriction();
+		consoleManager->UpdateCoF();
 	}
 
 	if (inputManager->CheckKeyPress('O'))
 	{
-		// TODO - Increase elasticity magnitude
+		physicsManager->IncrementElasticity();
+		consoleManager->UpdateCoR();
 	}
 
 	if (inputManager->CheckKeyPress('L'))
 	{
-		// TODO - Decrease elasticity magnitude
+		physicsManager->DecrementElasticity();
+		consoleManager->UpdateCoR();
 	}
 
 	// Camera Up
@@ -435,14 +442,6 @@ void Game::SimulationLoop()
 
 	// Apply timescale changes
 	m_dt *= timeScale;
-
-	/*
-	1. Calc obj physics
-	2. Clear manifold for next round of collision detection
-	3. Detect collisions
-	4. Determine response
-	5. Update physics
-	*/
 
 	// Calculate the physic calculations on all objects (e.g. new position, velocity, etc)
 	CalculateObjectPhysics();

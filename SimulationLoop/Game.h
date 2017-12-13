@@ -10,7 +10,10 @@
 #include "Plane.h"
 #include "Hemisphere.h"
 #include "Tray.h"
+#include <thread>
+
 using namespace std;
+class ConsoleManager;
 
 class Game
 {
@@ -40,6 +43,7 @@ private:
 
 	PhysicsManager* physicsManager;
 	InputManager* inputManager;
+	ConsoleManager* consoleManager;
 
 	HDC   m_hdc;
 
