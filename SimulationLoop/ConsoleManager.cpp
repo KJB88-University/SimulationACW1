@@ -1,22 +1,9 @@
-#include <iostream>
-#include <string>
 #include "ConsoleManager.h"
-
+#include <iostream>
+#include "Game.h"
 using namespace std;
 
 ConsoleManager* ConsoleManager::instance = 0;
-
-ConsoleManager::ConsoleManager(void)
-{
-	noOfBalls = 0;
-	eMag = 0.0f;
-	fMag = 0.0f;
-}
-
-ConsoleManager::~ConsoleManager(void)
-{
-
-}
 
 ConsoleManager* ConsoleManager::GetInstance(void)
 {
@@ -28,20 +15,69 @@ ConsoleManager* ConsoleManager::GetInstance(void)
 	return instance;
 }
 
-void ConsoleManager::ClearConsole(void) const
+ConsoleManager::ConsoleManager(void)
 {
-	cout << "\n\n\n\n\n\n\n\n\n\n\n\n" << endl;
+	CoR = 0.5f;
+	CoF = 0.75f;
+	noOfBalls = 0;
+
+	physics = PhysicsManager::GetInstance();
 }
 
-void ConsoleManager::UpdateConsole(int inNoOfBalls, float inEMag, float inFMag)
+ConsoleManager::~ConsoleManager(void)
 {
-	ClearConsole();
-	WriteConsole();
+}
+void ConsoleManager::UpdateCoR(void)
+{
+	CoR = physics->GetCoR();
+	PromptUpdate();
 }
 
-void ConsoleManager::WriteConsole(void) const
+void ConsoleManager::UpdateCoF(void)
 {
-	cout << "No. of Balls: " << noOfBalls << "\n"
-		<< "Elasticity Mag: " << eMag << "\n"
-		<< "Friction Mag: " << fMag << endl;
+	CoF = physics->GetCoF();
+	PromptUpdate();
 }
+
+void ConsoleManager::UpdateBalls(void)
+{
+	noOfBalls = Game::noOfBalls;
+	PromptUpdate();
+}
+
+void ConsoleManager::InitConsoleThread(void)
+{
+	thread consoleThread = thread(&ConsoleManager::ThreadedConsoleUpdate, this);
+	consoleThread.join();
+}
+
+void ConsoleManager::PromptUpdate(void)
+{
+	updateNow = true;
+	thread consoleThread = thread(&ConsoleManager::ThreadedConsoleUpdate, this);
+	consoleThread.join();
+}
+
+void ConsoleManager::StopUpdating(void)
+{
+	stopConsole = true;
+}
+void ConsoleManager::ThreadedConsoleUpdate(void)
+{
+		if (stopConsole)
+		{
+			return;
+		}
+
+		if (updateNow)
+		{
+			cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"; // Clear console
+			cout << "CoR Magnitude: " << CoR << "\n" <<
+				"Friction Magnitude: " << CoF << "\n" <<
+				"No. of Balls: " << noOfBalls << endl;
+
+			updateNow = false;
+		}
+
+}
+

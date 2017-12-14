@@ -1,5 +1,6 @@
 #include "ContactManifold.h"
 #include "Sphere.h"
+#include "Geometry.h"
 #include <assert.h>
 
 ContactManifold::ContactManifold(void) : m_numOfPoints(0)

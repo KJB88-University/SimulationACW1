@@ -1,29 +1,43 @@
 #pragma once
+#include <thread>
+#include <istream>
 #include <iostream>
+#include "PhysicsManager.h"
 
 class ConsoleManager
 {
-
 public:
+	static ConsoleManager* GetInstance(void);
 
-	// Get instance of this manager
-	static ConsoleManager* GetInstance();
+	// Update info
+	void UpdateCoF(void);
+	void UpdateCoR(void);
+	void UpdateBalls(void);
 
-	void UpdateConsole(int, float, float);
+	// Initialize the thread
+	void InitConsoleThread(void);
+
+	// Prompt a console update
+	void PromptUpdate(void);
+
+	// End updating loop
+	void StopUpdating(void);
 private:
 
-	// Values to be displayed
-	int noOfBalls;
-	float eMag;
-	float fMag;
-
-	// Private constructor to avoid instances being created
 	ConsoleManager(void);
 	~ConsoleManager(void);
+	//LARGE_INTEGER start, frequency, end;
+	//float m_dt;
 
-	void WriteConsole(void) const;
-	void ClearConsole(void) const;
+	float CoR = 0;
+	float CoF = 0;
+	int noOfBalls = 0;
 
-	// Instance of this manager
+	bool stopConsole = false;
+	bool updateNow = true;
+	//thread consoleThread;
 	static ConsoleManager* instance;
+
+	PhysicsManager* physics;
+	void ThreadedConsoleUpdate(void);
 };

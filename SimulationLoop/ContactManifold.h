@@ -3,6 +3,7 @@
 #include "Vector3f.h"
 
 class Sphere;
+class Geometry;
 
 struct ManifoldPoint 
 {
@@ -10,7 +11,6 @@ struct ManifoldPoint
 	Geometry *contactID2;
 	Vector3f contactNormal;
 	float collisionTime;
-
 };
 
 class ContactManifold
