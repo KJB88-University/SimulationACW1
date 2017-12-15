@@ -39,6 +39,10 @@ public:
 	float width;
 	float depth;
 
+	// Friction
+	void SetupFriction(void);
+	bool friction = false;
+
 	// Simulation Loop Methods
 	virtual void CalculatePhysics(float dt, float t) override;
 	virtual void CollisionDetection(Geometry* geometry, ContactManifold* contactManifold, float t, float dt) override;

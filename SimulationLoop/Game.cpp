@@ -129,7 +129,10 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	// Hemisphere
 	objVector.emplace_back
 	(
-		new Hemisphere(Vector3f(0.0f, 7.5f * scaleTweakable, 0.0f), 1.0f, 20.0f * scaleTweakable)
+		new Hemisphere(
+			Vector3f(0.0f, 7.5f * scaleTweakable, 0.0f),
+			1.0f,
+			20.0f * scaleTweakable)
 	);
 	
 	// Manifold
@@ -170,26 +173,21 @@ void Game::CheckInput()
 
 #pragma region Input Hooks
 
+	// Add a sphere (no detection atm) TODO
 	if (inputManager->CheckKeyPress('1'))
 	{
-		// TODO - ADD BALL
+
 		objVector.emplace_back(
 			new Sphere(
 				Vector3f(0.0f, 11.5f * scaleTweakable, 0.0f),
 				Vector3f(1.25f * scaleTweakable, 0.0f, -0.5f * scaleTweakable),
-				0.02f * scaleTweakable,
+				0.2f * scaleTweakable,
 				0.5f * scaleTweakable));
 
 		noOfBalls++;
 		consoleManager->UpdateBalls();
 	}
 
-	/*
-	if (inputManager->CheckKeyPress('2'))
-	{
-		// ADV - Cube
-	}
-	*/
 
 	if (inputManager->CheckKeyPress('3'))
 	{
@@ -220,13 +218,7 @@ void Game::CheckInput()
 		// TODO - REset sim
 	}
 
-	/*
-	if (inputManager->CheckKeyPress('N'))
-	{
-		// ADV - Toggle net
-	}
-	*/
-
+	// Change timescale
 	if (inputManager->CheckKeyPress('P'))
 	{
 		if (timeScale == 0.0f)
@@ -266,6 +258,7 @@ void Game::CheckInput()
 		}
 	}
 
+	// Friction control
 	if (inputManager->CheckKeyPress('I'))
 	{
 		physicsManager->IncrementFriction();
@@ -278,6 +271,7 @@ void Game::CheckInput()
 		consoleManager->UpdateCoF();
 	}
 
+	// Elasticity control
 	if (inputManager->CheckKeyPress('O'))
 	{
 		physicsManager->IncrementElasticity();

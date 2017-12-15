@@ -59,23 +59,27 @@ void Hemisphere::Render()
 {
 
 	// BOWL
+
 	glPushMatrix();
-	glColor3f(0.0, 1.0, 0.0);
-	glTranslatef(m_pos.GetX() , m_pos.GetY(), m_pos.GetZ()); // Change to default position
+		glTranslatef(m_pos.GetX(), m_pos.GetY(), m_pos.GetZ()); // Change to default position
+		glColor3f(0.0, 1.0, 0.0);
+		
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Change to line drawing
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Change to line drawing
+		glEnable(GL_CLIP_PLANE0);
+		glTranslatef(m_pos.GetX(), m_pos.GetY() - 22.5f * Game::scaleTweakable, m_pos.GetZ()); // Move world for clipping plane
+		glClipPlane(GL_CLIP_PLANE0, planeEqn);
+	glPopMatrix();
 
-	glEnable(GL_CLIP_PLANE0);
-	glTranslatef(m_pos.GetX(), m_pos.GetY() - 20.0f * Game::scaleTweakable, m_pos.GetZ()); // Move world for clipping plane
-	glClipPlane(GL_CLIP_PLANE0, planeEqn); 
-
-	glTranslatef(m_pos.GetX(), m_pos.GetY(), m_pos.GetZ()); // Return world for drawing sphere
-
-	glColor3d(1, 0, 0);
-	gluSphere(quadric, m_radius, 16, 16);
-	glRotatef(90.0, 1.0f, 0.0f, 0.0f);
-	glDisable(GL_CLIP_PLANE0);
+	glPushMatrix();
+		glTranslatef(m_pos.GetX(), m_pos.GetY(), m_pos.GetZ()); // Change to default position
+		glColor3d(1, 0, 0);
+		gluSphere(quadric, m_radius, 128, 128);
+		
+		glRotatef(90.0, 1.0f, 0.0f, 0.0f);
+		glDisable(GL_CLIP_PLANE0);
+	glPopMatrix();
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Revert to fill instead of lines
-	glPopMatrix();
+
 }

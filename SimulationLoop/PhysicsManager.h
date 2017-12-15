@@ -58,9 +58,6 @@ public:
 	void IncrementFriction(void);
 	void DecrementFriction(void);
 
-	// 0-2 Trays (Bot, Mid, Top)
-	// 3-6 Walls (Front, Back, Left, Right);
-	//vector<Plane*> planeList;
 private:
 
 	// Private constructor to avoid instances being created
@@ -84,14 +81,14 @@ private:
 	Vector3f PlaneProjection(Sphere* sphere1, Plane* plane);
 
 	// COLLISION DETECTION
-	bool IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt, Vector3f& outNormal);
-	//bool IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt);
+	bool IterativeCollisionDetectionS2S(Sphere* sphere1, Sphere* sphere2, float t, float dt);
 	bool IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plane1, float t, float dt);
-	bool PhysicsManager::IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt);
+	bool IterativeCollisionDetectionS2B(Sphere* sphere1, Hemisphere* hemisphere1, float t, float dt);
 
 		// COLLISION RESPONSE
 	void SphereToSphereCollisionResponse(ManifoldPoint &point);
 	void SphereToPlaneCollisionResponse(ManifoldPoint &point);
+	void SphereToBowlCollisionResponse(ManifoldPoint &point);
 
 	// RUNGE-KUTTA FOURTH ORDER
 	void RK4Integrate(State* state, float t, float dt);

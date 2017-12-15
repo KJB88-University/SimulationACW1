@@ -24,6 +24,11 @@ void Plane::SetupTray(void)
 	//m_velocity = Vector3f(1.0f * Game::scaleTweakable, 0.0f, 0.0f);
 }
 
+void Plane::SetupFriction(void)
+{
+	friction = true;
+}
+
 void Plane::MoveTrayIn(void)
 {
 	if (trayIn == true)
@@ -71,7 +76,7 @@ void Plane::Update(void)
 		if (trayMove && trayLocked)
 		{
 			// If we've reached maximum distance, cancel moving and lock
-			if (trayIn && m_pos.GetX() >= (10.0f * Game::scaleTweakable))
+			if (trayIn && m_pos.GetX() >= (10.1f * Game::scaleTweakable))
 			{
 				// Set vel to zero
 				m_velocity = Vector3f(0.0f, 0.0f, 0.0f);
@@ -81,7 +86,7 @@ void Plane::Update(void)
 				trayIn = false; // The tray is outside the box
 			}
 			// If we've reached minimum distance, cancel moving and lock
-			else if (!trayIn && m_pos.GetX() <= 0.0f)
+			else if (!trayIn && m_pos.GetX() <= -0.1f)
 			{
 				// Set vel to zero
 				m_velocity = Vector3f(0.0f, 0.0f, 0.0f);
