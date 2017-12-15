@@ -20,9 +20,10 @@ PhysicsManager* PhysicsManager::GetInstance()
 
 // CONSTRUCTOR
 PhysicsManager::PhysicsManager()
+	: up(0.0f, 1.0f, 0.0f), forward(0.0f, 0.0f, 1.0f), right(1.0f, 0.0f, 0.0f)
 {
 	m_CoR = 0.5f;
-	m_CoF = 0.75f;
+	m_CoF = 0.5f;
 }
 
 // RK4 Implementation
@@ -48,6 +49,18 @@ void PhysicsManager::CalculatePrePhysics(Sphere* sphere, float t, float dt)
 	// Push new positions to object
 	sphere->SetNewPos(state.position);
 	sphere->SetNewVel(state.velocity);
+
+	/*
+	// Find and apply new fake rotation
+	float distanceX = sphere->GetPos().GetX() - sphere->GetNewPos().GetX();
+	float distanceZ = sphere->GetPos().GetZ() - sphere->GetNewPos().GetZ();
+	float surfaceOfSphere = sphere->GetRadius() * 4 * M_PI;
+
+	float angleX = distanceX / surfaceOfSphere * 360;
+	float angleZ = distanceZ / surfaceOfSphere * 360;
+
+	sphere->SetRotation(angleX, angleZ);
+	*/
 }
 
 
@@ -453,6 +466,15 @@ void PhysicsManager::SphereToPlaneCollisionResponse
 	Vector3f newVel = point.contactID1->GetVel() - (1 + m_CoR)
 		* (plane->normal.dot(point.contactID1->GetVel()) * plane->normal);
 
+	if (plane->friction)
+	{
+		// Flip the direction of the force and apply mass value
+		Vector3f dir = (newVel * -1.0f * point.contactID1->GetMass()).normalise();
+
+		// Consider friction value in new velocity
+		newVel = newVel + (dir * m_CoF);
+	}
+
 	point.contactID1->SetNewVel(newVel);
 }
 
@@ -469,7 +491,32 @@ void PhysicsManager::SphereToBowlCollisionResponse(ManifoldPoint &point)
 
 void PhysicsManager::CalculatePostPhysics(Sphere* sphere)
 {
-	sphere->SetVel(sphere->GetNewVel());
+	// At rest
+	if (sphere->GetNewVel().length() > 0.25f)
+	{
+		sphere->SetVel(sphere->GetNewVel());
+	}
+	else
+	{
+		sphere->SetVel(Vector3f(0, 0, 0));
+	}
+
+	// Find and apply new rotation
+	/*
+	float x = sphere->GetNewPos().GetX() - sphere->GetPos().GetX();
+	float z = sphere->GetNewPos().GetZ() - sphere->GetPos().GetZ();
+
+	float rotation = atan2(x, z);
+
+	Vector3f velocity = Vector3f(cos(rotation) * 5 * Game::scaleTweakable , 0.0f, sin(rotation) * 5 * Game::scaleTweakable);
+	sphere->SetRotation(velocity);
+	*/
+	Vector3f rollAxis = CrossProduct(sphere->GetVel(), up * -1).normalise();
+	float surfaceOfSphere = sphere->GetRadius() * 4 * M_PI;
+	float angle = ((sphere->GetVel().length() * 360) / surfaceOfSphere);
+
+	sphere->SetRotation(rollAxis, angle);
+	// Apply new position
 	sphere->SetPos(sphere->GetNewPos());
 }
 void PhysicsManager::SetCoR(float newCoR)

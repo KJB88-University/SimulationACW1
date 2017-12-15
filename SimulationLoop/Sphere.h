@@ -30,6 +30,7 @@ public:
 	void SetForce(Vector3f force);
 	void SetAccel(Vector3f accel);
 	void SetVel(Vector3f vel);
+	void SetRotation(Vector3f rollAxis, float angle);
 	Vector3f GetAccel() const;
 	Vector3f GetForce() const;
 	Vector3f GetNewPos() const;
@@ -41,7 +42,6 @@ public:
 
 	void Render();
 
-	Vector3f collisionNormal;
 	bool atRest = false;
 
 private:
@@ -51,6 +51,8 @@ private:
 	Vector3f m_newPos;
 	Vector3f m_velocity;
 	Vector3f m_newVelocity;
+	Vector3f m_rollAxis;
+	float m_angle;
 
 	Vector3f m_force;
 	Vector3f m_acceleration;

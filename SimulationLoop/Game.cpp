@@ -39,6 +39,7 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 		Vector3f(0.0f, 0.0f, 1.0f)
 	);
 	tray1->SetupTray();
+	tray1->SetupFriction();
 	objVector.emplace_back(tray1);
 
 	/*

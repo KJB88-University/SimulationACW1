@@ -66,14 +66,18 @@ private:
 	// Instance of this manager
 	static PhysicsManager* instance;
 
-	// COLLISION DETECTION
-	int maxIterations = 5; // Maximum no. of iterations for precise collision detection
+	const Vector3f up;
+	const Vector3f forward;
+	const Vector3f right;
 
+	int maxIterations = 5; // Maximum no. of iterations for precise collision detection
+	
 	// Coefficient of Restitution
 	float m_CoR;
 
 	// Friction force
 	float m_CoF;
+
 	// Acceleration due to Gravity
 	const float m_gravity = -9.81f;
 
