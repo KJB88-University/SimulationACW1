@@ -91,10 +91,9 @@ void Sphere::SetVel(Vector3f vel)
 	m_velocity = vel;
 }
 
-void Sphere::SetRotation(Vector3f rollAxis, float angle)
+void Sphere::SetRotation(float angle)
 {
-	m_rollAxis = rollAxis;
-	m_angle = angle * Game::scaleTweakable;
+	m_angle += GetVel().length() / 6.14f;
 }
 #pragma endregion
 
@@ -133,13 +132,9 @@ void Sphere::Render()
 	glTranslatef(m_pos.GetX(), m_pos.GetY(), m_pos.GetZ());
 
 	// Apply fake rotation
-	glRotatef(m_angle, m_rollAxis.GetX(), m_rollAxis.GetY(), m_rollAxis.GetZ());
-
-
-	//glRotatef(m_angVel.GetX(), 0.0f, 0.0f, 1.0f);
-	//glRotatef(m_angVel.GetZ(), 1.0f, 0.0f, 0.0f);
-
-	if (m_velocity.length() > 0.25f)
+	//glRotatef(m_angle, 0.0f, 0.0f, GetVel().normalise().GetZ());
+	//glRotatef(m_angle, GetVel().normalise().GetX(), 0.0f, 0.0f);
+	if (m_newVelocity.length() > 2.75f)
 	{
 		glColor3d(1, 0, 0);
 	}

@@ -18,8 +18,9 @@ ConsoleManager* ConsoleManager::GetInstance(void)
 ConsoleManager::ConsoleManager(void)
 {
 	CoR = 0.5f;
-	CoF = 0.75f;
+	CoF = 0.5f;
 	noOfBalls = 0;
+	timeScale = 1.0f;
 
 	physics = PhysicsManager::GetInstance();
 }
@@ -45,6 +46,12 @@ void ConsoleManager::UpdateBalls(void)
 	PromptUpdate();
 }
 
+void ConsoleManager::UpdateTimeScale(float ts)
+{
+	timeScale = ts;
+	PromptUpdate();
+}
+
 void ConsoleManager::InitConsoleThread(void)
 {
 	thread consoleThread = thread(&ConsoleManager::ThreadedConsoleUpdate, this);
@@ -64,6 +71,8 @@ void ConsoleManager::StopUpdating(void)
 }
 void ConsoleManager::ThreadedConsoleUpdate(void)
 {
+	//system("CLS"); // This makes me sad
+
 		if (stopConsole)
 		{
 			return;
@@ -71,10 +80,13 @@ void ConsoleManager::ThreadedConsoleUpdate(void)
 
 		if (updateNow)
 		{
-			cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"; // Clear console
+			
 			cout << "CoR Magnitude: " << CoR << "\n" <<
 				"Friction Magnitude: " << CoF << "\n" <<
-				"No. of Balls: " << noOfBalls << endl;
+				"No. of Balls: " << noOfBalls << "\n" <<
+				"Time Scale: " << timeScale << endl;
+			cout << "------------------------------------" << endl;
+			//cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"; // Clear console
 
 			updateNow = false;
 		}

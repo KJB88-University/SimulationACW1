@@ -29,9 +29,10 @@ public:
 	Vector3f botLeft;
 
 	void SetupTray(void);
-	void Plane::MoveTrayIn(void);
-	void Plane::MoveTrayOut(void);
+	void MoveTrayIn(void);
+	void MoveTrayOut(void);
 
+	void ResetTray();
 	bool trayMove = false;
 
 	// Plane dimensions
@@ -51,13 +52,13 @@ public:
 
 	virtual void Render();
 
+	bool hasTray = false;
 private:
 
 	// Copy of DT for movable Trays
 	float m_dt;
 
 	// Tray Movement vars
-	bool hasTray = false;
 	bool trayIn = true;
 	bool trayLocked = false;
 

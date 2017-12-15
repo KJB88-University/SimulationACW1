@@ -30,7 +30,7 @@ public:
 	void SetForce(Vector3f force);
 	void SetAccel(Vector3f accel);
 	void SetVel(Vector3f vel);
-	void SetRotation(Vector3f rollAxis, float angle);
+	void SetRotation(float angle);
 	Vector3f GetAccel() const;
 	Vector3f GetForce() const;
 	Vector3f GetNewPos() const;
@@ -44,6 +44,8 @@ public:
 
 	bool atRest = false;
 
+	Vector3f orientation;
+	Vector3f angVel;
 private:
 	
 	// Sphere-specific data members

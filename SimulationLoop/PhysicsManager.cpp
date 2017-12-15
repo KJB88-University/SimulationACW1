@@ -265,6 +265,14 @@ bool PhysicsManager::IterativeCollisionDetectionS2P(Sphere* sphere1, Plane* plan
 
 	Vector3f projection = PlaneProjection(sphere1, plane1);
 
+	if (plane1->hasTray)
+	{
+		if (fPos1.GetY() < pOrigin.GetY())
+		{
+			pNormal = pNormal * -1;
+		}
+	}
+
 	// Binary chop values
 	float minN = 0.0f;
 	float maxN = 1.0f;
@@ -492,14 +500,8 @@ void PhysicsManager::SphereToBowlCollisionResponse(ManifoldPoint &point)
 void PhysicsManager::CalculatePostPhysics(Sphere* sphere)
 {
 	// At rest
-	if (sphere->GetNewVel().length() > 0.25f)
-	{
-		sphere->SetVel(sphere->GetNewVel());
-	}
-	else
-	{
-		sphere->SetVel(Vector3f(0, 0, 0));
-	}
+	sphere->SetVel(sphere->GetNewVel());
+
 
 	// Find and apply new rotation
 	/*
@@ -511,11 +513,12 @@ void PhysicsManager::CalculatePostPhysics(Sphere* sphere)
 	Vector3f velocity = Vector3f(cos(rotation) * 5 * Game::scaleTweakable , 0.0f, sin(rotation) * 5 * Game::scaleTweakable);
 	sphere->SetRotation(velocity);
 	*/
-	Vector3f rollAxis = CrossProduct(sphere->GetVel(), up * -1).normalise();
-	float surfaceOfSphere = sphere->GetRadius() * 4 * M_PI;
-	float angle = ((sphere->GetVel().length() * 360) / surfaceOfSphere);
+	
+	//float surfaceOfSphere = sphere->GetRadius() * 4 * M_PI;
+	//float angle = ((sphere->GetVel().length() * 360) / surfaceOfSphere);
 
-	sphere->SetRotation(rollAxis, angle);
+	//sphere->SetRotation(angle);
+	
 	// Apply new position
 	sphere->SetPos(sphere->GetNewPos());
 }

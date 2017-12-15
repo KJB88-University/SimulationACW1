@@ -13,6 +13,7 @@ public:
 	void UpdateCoF(void);
 	void UpdateCoR(void);
 	void UpdateBalls(void);
+	void UpdateTimeScale(float timeScale);
 
 	// Initialize the thread
 	void InitConsoleThread(void);
@@ -22,20 +23,19 @@ public:
 
 	// End updating loop
 	void StopUpdating(void);
+
 private:
 
 	ConsoleManager(void);
 	~ConsoleManager(void);
-	//LARGE_INTEGER start, frequency, end;
-	//float m_dt;
 
 	float CoR = 0;
 	float CoF = 0;
 	int noOfBalls = 0;
+	float timeScale = 0;
 
 	bool stopConsole = false;
 	bool updateNow = true;
-	//thread consoleThread;
 	static ConsoleManager* instance;
 
 	PhysicsManager* physics;

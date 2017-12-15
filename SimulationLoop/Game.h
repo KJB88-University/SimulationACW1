@@ -23,7 +23,6 @@ public:
 	const static float scaleTweakable;
 	static float m_dt;
 	static int noOfBalls;
-
 	Game(HDC hdc);
 	~Game(void);
 
@@ -58,6 +57,8 @@ private:
 	Plane* tray2;
 	Plane* tray3;
 
+	Vector3f spawnPoint;
+
 	// Time Tweakable
 	float timeScale = 1.0f;
 	float originalTimeScale = 1.0f;
@@ -75,7 +76,7 @@ private:
 	float pan_z = 0.0f;
 
 	float rotate_x = 0.0f;
-	float rotate_y = 0.0f;
+	float rotate_y = 50.0f;
 
 	float zoomFactor;
 	const float zoomMin = 3.0f;

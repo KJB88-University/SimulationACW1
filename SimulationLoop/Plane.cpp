@@ -45,6 +45,14 @@ void Plane::MoveTrayOut(void)
 	}
 }
 
+void Plane::ResetTray()
+{
+	trayIn = true;
+	trayLocked = false;
+	m_pos = Vector3f(0.0f, m_pos.GetY(), m_pos.GetZ());
+	m_velocity = Vector3f(0.0f, 0.0f, 0.0f);
+}
+
 void Plane::Update(void)
 {
 	// If we have a tray

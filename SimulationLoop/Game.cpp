@@ -19,6 +19,7 @@ float Game::m_dt = 0;
 // Constructor
 Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 {
+	spawnPoint = Vector3f(0, 11.5f * scaleTweakable, 0);
 
 	// Create / Get Managers
 	inputManager = InputManager::GetInstance();
@@ -26,9 +27,9 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 	consoleManager = ConsoleManager::GetInstance();
 	consoleManager->InitConsoleThread();
 
-//#pragma region TRAYS
-	
-	// Bottom Tray
+	//#pragma region TRAYS
+
+		// Bottom Tray
 	tray1 = new Plane
 	(
 		Vector3f(0.0f, -4.5f * scaleTweakable, 0.0f),
@@ -74,59 +75,59 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 #pragma endregion
 
 #pragma region PLANES
-	
-	
+
+
 	// 'Front' face
 	Plane* plane = new Plane
-		(
-			Vector3f(0.0f, 0.0f, 5.0f * scaleTweakable),
-			7.5f * scaleTweakable,
-			5.0f * scaleTweakable,
-			Vector3f(0.0f, 0.0f, -1.0f),
-			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(-1.0f, 0.0, 0.0f)
-		);
+	(
+		Vector3f(0.0f, 0.0f, 5.0f * scaleTweakable),
+		7.5f * scaleTweakable,
+		5.0f * scaleTweakable,
+		Vector3f(0.0f, 0.0f, -1.0f),
+		Vector3f(0.0f, 1.0f, 0.0f),
+		Vector3f(-1.0f, 0.0, 0.0f)
+	);
 	objVector.emplace_back(plane);
 
 	// 'Back' face
 	plane = new Plane
-		(
-			Vector3f(0.0f, 0.0f, -5.0f * scaleTweakable),
-			7.5f * scaleTweakable,
-			5.0f * scaleTweakable,
-			Vector3f(0.0f, 0.0f, 1.0f),
-			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(1.0f, 0.0f, 0.0f)
-		);
+	(
+		Vector3f(0.0f, 0.0f, -5.0f * scaleTweakable),
+		7.5f * scaleTweakable,
+		5.0f * scaleTweakable,
+		Vector3f(0.0f, 0.0f, 1.0f),
+		Vector3f(0.0f, 1.0f, 0.0f),
+		Vector3f(1.0f, 0.0f, 0.0f)
+	);
 	objVector.emplace_back(plane);
 
 	// 'Left' face
-	plane = new Plane		
+	plane = new Plane
 	(
-			Vector3f(-5.0f * scaleTweakable, 0.0f, 0.0f),
-			7.5f * scaleTweakable,
-			5.0f * scaleTweakable,
-			Vector3f(1.0f, 0.0f, 0.0f),
-			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, 1.0f)
-		);
+		Vector3f(-5.0f * scaleTweakable, 0.0f, 0.0f),
+		7.5f * scaleTweakable,
+		5.0f * scaleTweakable,
+		Vector3f(1.0f, 0.0f, 0.0f),
+		Vector3f(0.0f, 1.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, 1.0f)
+	);
 	objVector.emplace_back(plane);
 
 	// 'Right' face
 	plane = new Plane
-		(
-			Vector3f(5.0f * scaleTweakable, 0.0f, 0.0f),
-			7.5f * scaleTweakable,
-			5.0f * scaleTweakable,
-			Vector3f(-1.0f, 0.0f, 0.0f),
-			Vector3f(0.0f, 1.0f, 0.0f),
-			Vector3f(0.0f, 0.0f, -1.0f)
-		);
+	(
+		Vector3f(5.0f * scaleTweakable, 0.0f, 0.0f),
+		7.5f * scaleTweakable,
+		5.0f * scaleTweakable,
+		Vector3f(-1.0f, 0.0f, 0.0f),
+		Vector3f(0.0f, 1.0f, 0.0f),
+		Vector3f(0.0f, 0.0f, -1.0f)
+	);
 	objVector.emplace_back(plane);
-	
-	
+
+
 #pragma endregion
-	
+
 	// Hemisphere
 	objVector.emplace_back
 	(
@@ -135,14 +136,14 @@ Game::Game(HDC hdc) : m_hdc(hdc), m_previousTime(0)
 			1.0f,
 			20.0f * scaleTweakable)
 	);
-	
+
 	// Manifold
 	m_manifold = new ContactManifold();
 
 	// Perf metrics
 	QueryPerformanceFrequency(&frequency);
 	QueryPerformanceCounter(&start);
-	
+
 }
 
 // Deconstructor
@@ -174,49 +175,102 @@ void Game::CheckInput()
 
 #pragma region Input Hooks
 
-	// Add a sphere (no detection atm) TODO
+	// Add a sphere
 	if (inputManager->CheckKeyPress('1'))
 	{
+		// Randomise starting vel
+		float X = rand() % 3 + 1;
+		float Z = rand() % 3 + 1;
+		bool collisionRisk = false;
+		for (int i = 0; i < objVector.size(); ++i)
+		{
+			if (objVector[i]->objType == SPHERE)
+			{
+				if ((spawnPoint.distance(objVector[i]->GetPos()) - (5 * 2)) < 0)
+				{
+					collisionRisk = true;
+					break;
+				}
+			}
+		}
 
-		objVector.emplace_back(
-			new Sphere(
-				Vector3f(0.0f, 11.5f * scaleTweakable, 0.0f),
-				Vector3f(1.25f * scaleTweakable, 0.0f, -0.5f * scaleTweakable),
-				0.2f * scaleTweakable,
-				0.5f * scaleTweakable));
+		if (!collisionRisk)
+		{
+			objVector.emplace_back(
+				new Sphere(
+					Vector3f(0.0f, 11.5f * scaleTweakable, 0.0f),
+					Vector3f(X * scaleTweakable, 0.0f, Z * scaleTweakable),
+					0.2f * scaleTweakable,
+					0.5f * scaleTweakable));
 
-		noOfBalls++;
-		consoleManager->UpdateBalls();
+			noOfBalls++;
+			consoleManager->UpdateBalls();
+		}
+		else
+		{
+			collisionRisk = false;
+		}
+
 	}
 
-
+	// Move top tray
 	if (inputManager->CheckKeyPress('3'))
 	{
-		// TODO - Remove top tray
 		tray3->MoveTrayOut();
 	}
 
 	if (inputManager->CheckKeyPress('4'))
 	{
-		// TODO - add top tray
 		tray3->MoveTrayIn();
 	}
 
+	// Move bot tray
 	if (inputManager->CheckKeyPress('5'))
 	{
-		// TODO - Remove bottom tray
 		tray1->MoveTrayOut();
 	}
 
 	if (inputManager->CheckKeyPress('6'))
 	{
-		// TODO - Add bottom tray
 		tray1->MoveTrayIn();
 	}
 
+	// Reset sim
 	if (inputManager->CheckKeyPress('R'))
 	{
-		// TODO - REset sim
+		/*
+		for (int i = 0; i < objVector.size(); ++i)
+		{
+			// Delete spheres
+			if (objVector[i]->objType == SPHERE)
+			{
+				delete objVector[i];
+			}
+
+			// Reset planes
+			else if (objVector[i]->objType == PLANE)
+			{
+				Plane* plane = static_cast<Plane*>(objVector[i]);
+				if (plane->hasTray)
+				{
+					plane->ResetTray();
+				}
+			}
+		}
+
+		// Reset physics / sim values
+		physicsManager->SetCoR(0.5f);
+		physicsManager->SetCoF(0.5f);
+		noOfBalls = 0;
+		timeScale = 1.0f;
+		originalTimeScale = 1.0f;
+
+		// Reset camera vars
+		pan_x = 0;
+		pan_y = 0;
+		pan_z = 0;
+		rotate_x = 0;
+		*/
 	}
 
 	// Change timescale
@@ -244,6 +298,7 @@ void Game::CheckInput()
 		{
 			timeScale = maxTimeClamp;
 		}
+		consoleManager->UpdateTimeScale(timeScale);
 	}
 
 	// Decrease Time Scale
@@ -257,6 +312,7 @@ void Game::CheckInput()
 		{
 			timeScale = minTimeClamp;
 		}
+		consoleManager->UpdateTimeScale(timeScale);
 	}
 
 	// Friction control
@@ -369,12 +425,12 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			rotate_y -= baseSpeed * shiftMultiplier * m_dt;
+			rotate_x -= baseSpeed * shiftMultiplier * m_dt;
 		}
 
 		else
 		{
-			rotate_y -= baseSpeed * m_dt;
+			rotate_x -= baseSpeed * m_dt;
 		}
 
 	}
@@ -384,43 +440,14 @@ void Game::CheckInput()
 	{
 		if (inputManager->CheckShift())
 		{
-			rotate_y += baseSpeed * shiftMultiplier * m_dt;
-		}
-
-		else
-		{
-			rotate_y += baseSpeed * m_dt;
-		}
-
-	}
-
-	// Camera X-Up rotation
-	if (inputManager->CheckPgUp())
-	{
-		if (inputManager->CheckShift())
-		{
 			rotate_x += baseSpeed * shiftMultiplier * m_dt;
 		}
 
 		else
 		{
 			rotate_x += baseSpeed * m_dt;
-
-		}
-	}
-
-	// Camera X-Down rotation
-	if (inputManager->CheckPgDown())
-	{
-		if (inputManager->CheckShift())
-		{
-			rotate_x -= baseSpeed * shiftMultiplier * m_dt;
 		}
 
-		else
-		{
-			rotate_x -= baseSpeed * m_dt;
-		}
 	}
 #pragma endregion
 
@@ -512,11 +539,11 @@ void Game::Render()									// Here's Where We Do All The Drawing
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	glLoadIdentity();									// Reset The Current Modelview Matrix
 
-	glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
-	glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
+	//glRotatef(rotate_x, 1.0f, 0.0f, 0.0f);
+	//glRotatef(rotate_y, 0.0f, 1.0f, 0.0f);
 	glTranslatef(pan_x, pan_y, pan_z);
 
-	gluLookAt(0, 50, 100, 0, 0, 0, 0, 1, 0);
+	gluLookAt(rotate_x, 50, 100, 0, 0, 0, 0, 1, 0);
 
 	//tray1->Render();
 	//tray3->Render();
